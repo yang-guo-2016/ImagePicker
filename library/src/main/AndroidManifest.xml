@@ -1,9 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.changjiashuai.library">
 
-    <application android:allowBackup="true" android:label="@string/app_name"
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
         android:supportsRtl="true">
-
+        <activity android:name="io.github.changjiashuai.ui.ImageGridActivity" />
+        <activity android:name="io.github.changjiashuai.ui.ImagePreviewActivity" />
+        <activity android:name="io.github.changjiashuai.ui.ImageCropActivity"></activity>
     </application>
 
 </manifest>
