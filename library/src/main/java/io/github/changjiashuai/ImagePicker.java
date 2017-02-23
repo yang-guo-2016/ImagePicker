@@ -27,11 +27,11 @@ import io.github.changjiashuai.widget.CropImageView;
 
 public class ImagePicker {
 
-    public static final int REQUEST_CODE_PICK = 1001;
+    public static final int REQUEST_CODE_TAKE = 1001;
     public static final int REQUEST_CODE_CROP = 1002;
     public static final int REQUEST_CODE_PREVIEW = 1003;
-    public static final int REQUEST_CODE_ITEMS = 1004;
-    public static final int REQUEST_CODE_BACK = 1005;
+    public static final int RESULT_CODE_ITEMS = 1004;
+    public static final int RESULT_CODE_BACK = 1005;
 
     public static final String EXTRA_RESULT_ITEMS = "extra_result_items";
     public static final String EXTRA_SELECTED_IMAGE_POSITION = "extra_selected_image_position";
@@ -51,7 +51,7 @@ public class ImagePicker {
     @CropImageView.Style
     private int style = CropImageView.RECTANGLE;    //裁剪框的形状
     private File cropCacheFolder;
-    private File pickImageFile;
+    private File takeImageFile;
 
     private ArrayList<ImageItem> mSelectedImages = new ArrayList<>();   //选中的图片集合
     private List<ImageFolder> mImageFolders; //所有的图片文件夹
@@ -173,19 +173,19 @@ public class ImagePicker {
         this.cropCacheFolder = cropCacheFolder;
     }
 
-    public File getPickImageFile() {
-        return pickImageFile;
+    public File getTakeImageFile() {
+        return takeImageFile;
     }
 
-    public void setPickImageFile(File pickImageFile) {
-        this.pickImageFile = pickImageFile;
+    public void setTakeImageFile(File takeImageFile) {
+        this.takeImageFile = takeImageFile;
     }
 
     public List<ImageFolder> getImageFolders() {
         return mImageFolders;
     }
 
-    public void setImageFolders(ArrayList<ImageFolder> imageFolders) {
+    public void setImageFolders(List<ImageFolder> imageFolders) {
         mImageFolders = imageFolders;
     }
 
@@ -245,18 +245,18 @@ public class ImagePicker {
         takePictureIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
             if (Utils.existSDCard()) {
-                pickImageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/camera/");
+                takeImageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/camera/");
             } else {
-                pickImageFile = Environment.getDataDirectory();
+                takeImageFile = Environment.getDataDirectory();
             }
-            pickImageFile = createFile(pickImageFile, "IMG_", ".jpg");
-            if (pickImageFile != null) {
+            takeImageFile = createFile(takeImageFile, "IMG_", ".jpg");
+            if (takeImageFile != null) {
                 // 默认情况下，即不需要指定intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                 // 照相机有自己默认的存储路径，拍摄的照片将返回一个缩略图。如果想访问原始图片，
                 // 可以通过dat extra能够得到原始图片位置。即，如果指定了目标uri，data就没有数据，
                 // 如果没有指定uri，则data就返回有数据！
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.parse("file://" + pickImageFile.getAbsolutePath()));
+                        Uri.parse("file://" + takeImageFile.getAbsolutePath()));
             }
         }
         activity.startActivityForResult(takePictureIntent, requestCode);

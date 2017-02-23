@@ -1,5 +1,8 @@
 package io.github.changjiashuai.loader;
 
+import android.content.Context;
+import android.widget.ImageView;
+
 /**
  * Email: changjiashuai@gmail.com
  *
@@ -7,4 +10,7 @@ package io.github.changjiashuai.loader;
  */
 
 public interface ImageLoader {
+    void displayImage(Context context, String path, ImageView imageView, int width, int height);
+
+    void clearMemoryCache();
 }

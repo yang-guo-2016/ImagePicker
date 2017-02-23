@@ -1,0 +1,32 @@
+package io.github.changjiashuai.imagepicker;
+
+import android.content.Context;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+
+import io.github.changjiashuai.loader.ImageLoader;
+
+/**
+ * Email: changjiashuai@gmail.com
+ *
+ * Created by CJS on 2017/2/23 17:56.
+ */
+
+public class GlideImageLoder implements ImageLoader {
+
+    @Override
+    public void displayImage(Context context, String path, ImageView imageView, int width, int height) {
+        Glide.with(context)
+                .load(path)
+                .centerCrop()
+                .placeholder(R.mipmap.ic_launcher)
+                .crossFade()
+                .into(imageView);
+    }
+
+    @Override
+    public void clearMemoryCache() {
+
+    }
+}
