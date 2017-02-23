@@ -8,7 +8,7 @@
         android:supportsRtl="true">
         <activity android:name="io.github.changjiashuai.ui.ImageGridActivity" />
         <activity android:name="io.github.changjiashuai.ui.ImagePreviewActivity" />
-        <activity android:name="io.github.changjiashuai.ui.ImageCropActivity"></activity>
+        <activity android:name="io.github.changjiashuai.ui.ImageCropActivity"/>
     </application>
 
 </manifest>
