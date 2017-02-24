@@ -3,6 +3,7 @@ package io.github.changjiashuai.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,11 +82,9 @@ public class ImageFolderAdapter extends BaseAdapter {
         mImagePicker.getImageLoader().displayImage(mActivity, folder.cover.path, holder.cover, mImageSize, mImageSize);
 
         if (lastSelected == position) {
-//            holder.folderCheck.setVisibility(View.VISIBLE);
-            holder.folderCheck.setImageResource(R.drawable.list_selected);
+            holder.folderCheck.setChecked(true);
         } else {
-//            holder.folderCheck.setVisibility(View.INVISIBLE);
-            holder.folderCheck.setImageResource(R.drawable.list_unselected);
+            holder.folderCheck.setChecked(false);
         }
         return convertView;
     }
@@ -106,13 +105,13 @@ public class ImageFolderAdapter extends BaseAdapter {
         ImageView cover;
         TextView folderName;
         TextView imageCount;
-        ImageView folderCheck;
+        AppCompatCheckBox folderCheck;
 
         public ViewHolder(View view) {
             cover = (ImageView) view.findViewById(R.id.iv_cover);
             folderName = (TextView) view.findViewById(R.id.tv_folder_name);
             imageCount = (TextView) view.findViewById(R.id.tv_image_count);
-            folderCheck = (ImageView) view.findViewById(R.id.iv_folder_check);
+            folderCheck = (AppCompatCheckBox) view.findViewById(R.id.cb_folder_check);
             view.setTag(this);
         }
     }

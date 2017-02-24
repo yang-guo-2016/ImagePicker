@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:descendantFocusability="blocksDescendants">
 
         <ImageView
             android:id="@+id/iv_cover"
@@ -47,15 +48,13 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_folder_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cb_folder_check"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="15dp"
-            android:contentDescription="@null"
-            android:src="@drawable/list_selected" />
-
+            android:layout_marginRight="16dp"
+            android:theme="@style/ImagePickerTheme.CheckBox" />
     </LinearLayout>
 
     <View

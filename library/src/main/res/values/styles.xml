@@ -9,9 +9,9 @@
         <item name="android:fitsSystemWindows">false</item>
     </style>
 
-    <!--SuperCheckbox的样式-->
-    <style name="ImagePickerTheme.SuperCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/selector_item_checked</item>
+    <style name="ImagePickerTheme.CheckBox" parent="ImagePickerTheme">
+        <item name="colorControlNormal">@color/theme_body</item>
+        <item name="colorControlActivated">#149A45</item>
     </style>
 
     <style name="ImagePickerTheme.FolderPopupWindow.Anim" parent="ImagePickerTheme">

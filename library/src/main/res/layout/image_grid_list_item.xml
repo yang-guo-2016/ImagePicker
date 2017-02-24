@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -8,6 +9,7 @@
         android:id="@+id/iv_thumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@null"
         android:scaleType="centerCrop"
         android:src="@drawable/default_image" />
 
@@ -18,12 +20,21 @@
         android:background="#88000000"
         android:visibility="gone" />
 
-    <io.github.changjiashuai.widget.SuperCheckBox
+    <!--<io.github.changjiashuai.widget.SuperCheckBox-->
+    <!--android:id="@+id/cb_check"-->
+    <!--android:layout_width="32dp"-->
+    <!--android:layout_height="32dp"-->
+    <!--android:layout_gravity="top|right"-->
+    <!--android:paddingRight="10dp"-->
+    <!--android:paddingTop="20dp"-->
+    <!--app:color_checked="#149A45" />-->
+
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/cb_check"
-        style="@style/ImagePickerTheme.SuperCheckboxTheme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="top|right"
         android:paddingRight="10dp"
-        android:paddingTop="20dp" />
+        android:paddingTop="20dp"
+        android:theme="@style/ImagePickerTheme.CheckBox" />
 </FrameLayout>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +20,6 @@ import io.github.changjiashuai.Utils;
 import io.github.changjiashuai.adapter.ImagePageAdapter;
 import io.github.changjiashuai.bean.ImageItem;
 import io.github.changjiashuai.library.R;
-import io.github.changjiashuai.widget.SuperCheckBox;
 import io.github.changjiashuai.widget.ViewPagerFixed;
 
 public class ImagePreviewActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
@@ -37,8 +37,8 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     public static final String ISORIGIN = "isOrigin";
 
     private boolean isOrigin;                      //是否选中原图
-    private SuperCheckBox mCbCheck;                //是否选中当前图片的CheckBox
-    private SuperCheckBox mCbOrigin;               //原图
+    private AppCompatCheckBox mCbCheck;                //是否选中当前图片的CheckBox
+    private AppCompatCheckBox mCbOrigin;               //原图
     private Button mBtnOk;                         //确认图片的选择
     private View bottomBar;
 
@@ -100,8 +100,8 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         bottomBar = findViewById(R.id.bottom_bar);
         bottomBar.setVisibility(View.VISIBLE);
 
-        mCbCheck = (SuperCheckBox) findViewById(R.id.cb_check);
-        mCbOrigin = (SuperCheckBox) findViewById(R.id.cb_origin);
+        mCbCheck = (AppCompatCheckBox) findViewById(R.id.cb_check);
+        mCbOrigin = (AppCompatCheckBox) findViewById(R.id.cb_origin);
         mCbOrigin.setText(getString(R.string.origin));
         mCbOrigin.setOnCheckedChangeListener(this);
         mCbOrigin.setChecked(isOrigin);
@@ -231,24 +231,6 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        int id = buttonView.getId();
-        if (id == R.id.cb_origin) {
-            if (isChecked) {
-                long size = 0;
-                for (ImageItem item : mSelectedImages)
-                    size += item.size;
-                String fileSize = Formatter.formatFileSize(this, size);
-                isOrigin = true;
-//                mCbOrigin.setText(getString(R.string.origin_size, fileSize));
-            } else {
-                isOrigin = false;
-//                mCbOrigin.setText(getString(R.string.origin));
-            }
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         Intent intent = new Intent();
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
@@ -261,5 +243,23 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     protected void onDestroy() {
         mImagePicker.removeOnImageSelectedListener(this);
         super.onDestroy();
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        int id = buttonView.getId();
+        if (id == R.id.cb_origin) {
+            if (isChecked) {
+                long size = 0;
+                for (ImageItem item : mSelectedImages)
+                    size += item.size;
+                String fileSize = Formatter.formatFileSize(this, size);
+                isOrigin = true;
+                mCbOrigin.setText(getString(R.string.origin_size, fileSize));
+            } else {
+                isOrigin = false;
+                mCbOrigin.setText(getString(R.string.origin));
+            }
+        }
     }
 }

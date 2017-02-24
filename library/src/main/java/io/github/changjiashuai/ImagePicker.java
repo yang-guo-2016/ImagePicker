@@ -306,9 +306,15 @@ public class ImagePicker {
     }
 
     public void addSelectedImageItem(int position, ImageItem item, boolean isAdd) {
-        if (isAdd) {
+        if (isAdd && mSelectedImages.size() < selectLimit) {
+            if (mSelectedImages.contains(item)) {
+                return;
+            }
             mSelectedImages.add(item);
         } else {
+            if (!mSelectedImages.contains(item)) {
+                return;
+            }
             mSelectedImages.remove(item);
         }
         notifyImageSelectedChanged(position, item, isAdd);

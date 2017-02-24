@@ -126,14 +126,13 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         mBtnPreview.setText(getResources().getString(R.string.preview_count,
                 ImagePicker.getInstance().getSelectImageCount()));
         mImageGridAdapter.notifyDataSetChanged();
-
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_ok) {
-            viewToImagePreviewForResult();
+            finishWithResult();
         } else if (id == R.id.btn_dir) {
             if (mImageFolders == null) {
                 Log.i("ImageGridActivity", "您的手机没有图片");
@@ -220,7 +219,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                 Intent intent = new Intent(ImageGridActivity.this, ImageCropActivity.class);
                 startActivityForResult(intent, ImagePicker.REQUEST_CODE_CROP);//单选需要裁剪，进入裁剪界面
             } else {
-                viewToImagePreviewForResult();
+                finishWithResult();
             }
         }
     }
@@ -256,14 +255,14 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                     Intent intent = new Intent(ImageGridActivity.this, ImageCropActivity.class);
                     startActivityForResult(intent, ImagePicker.REQUEST_CODE_CROP);  //单选需要裁剪，进入裁剪界面
                 } else {
-                    viewToImagePreviewForResult();
+                    finishWithResult();
                 }
             }
         }
     }
 
     // 当前Activity 打开Preview
-    private void viewToImagePreviewForResult(){
+    private void finishWithResult(){
         Intent intent = new Intent();
         intent.putExtra(ImagePicker.EXTRA_RESULT_ITEMS,
                 ImagePicker.getInstance().getSelectedImages());
