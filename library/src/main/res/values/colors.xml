@@ -4,4 +4,8 @@
     <color name="status_bar">#303135</color>
     <color name="top_bar">#9f556061</color>
     <color name="transparent">#00000000</color>
+
+    <color name="dollar_bill">#86B66E</color>
+    <color name="kelly_green">#45B600</color>
+    <color name="napier_green">#2A7300</color>
 </resources>

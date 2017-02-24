@@ -19,4 +19,8 @@
         <attr name="color_unchecked" format="color"/>
         <attr name="color_unchecked_stroke" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="TriangleView">
+        <attr name="fillColor" format="color"/>
+    </declare-styleable>
 </resources>

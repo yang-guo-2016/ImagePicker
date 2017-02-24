@@ -23,18 +23,21 @@
         android:visibility="gone">
 
         <android.support.v7.widget.AppCompatCheckBox
+            android:theme="@style/ImagePickerTheme.CheckBox"
             android:id="@+id/cb_origin"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:paddingLeft="8dp"
             android:text="原图(3.07M)"
             android:textColor="#FFF" />
 
         <android.support.v7.widget.AppCompatCheckBox
+            android:theme="@style/ImagePickerTheme.CheckBox"
             android:id="@+id/cb_check"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="12dp"

@@ -10,8 +10,13 @@
     </style>
 
     <style name="ImagePickerTheme.CheckBox" parent="ImagePickerTheme">
-        <item name="colorControlNormal">@color/theme_body</item>
+        <item name="colorControlNormal">@android:color/darker_gray</item>
         <item name="colorControlActivated">#149A45</item>
+    </style>
+
+    <style name="ImagePickerTheme.Button" parent="ImagePickerTheme">
+        <item name="colorButtonNormal">@color/kelly_green</item><!--正常状态下的颜色  -->
+        <item name="colorControlHighlight">@color/napier_green</item><!--覆盖色，按下的颜色  -->
     </style>
 
     <style name="ImagePickerTheme.FolderPopupWindow.Anim" parent="ImagePickerTheme">

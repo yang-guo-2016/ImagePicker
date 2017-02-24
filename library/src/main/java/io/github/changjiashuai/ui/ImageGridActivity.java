@@ -25,6 +25,7 @@ import io.github.changjiashuai.bean.ImageFolder;
 import io.github.changjiashuai.bean.ImageItem;
 import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.widget.FolderPopUpWindow;
+import io.github.changjiashuai.widget.TriangleDrawable;
 
 public class ImageGridActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, ImageDataSource.OnImagesLoadedListener, ImageGridAdapter.OnImageItemClickListener {
 
@@ -64,6 +65,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         mBtnOk = (Button) findViewById(R.id.btn_ok);
         mBtnOk.setOnClickListener(this);
         mBtnDir = (Button) findViewById(R.id.btn_dir);
+        mBtnDir.setCompoundDrawablesWithIntrinsicBounds(null, null, new TriangleDrawable(), null);
         mBtnDir.setOnClickListener(this);
         mBtnPreview = (Button) findViewById(R.id.btn_preview);
         mBtnPreview.setOnClickListener(this);

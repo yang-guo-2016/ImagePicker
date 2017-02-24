@@ -35,19 +35,16 @@
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_ok"
+        android:theme="@style/ImagePickerTheme.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="#149A45"
-        android:minHeight="30dp"
-        android:minWidth="50dp"
-        android:padding="8dp"
         android:text="完成(3/9)"
         android:textColor="#ffffff"
-        android:textSize="14dp" />
+        android:textSize="14sp" />
 
     <ImageView
         android:id="@+id/btn_del"
