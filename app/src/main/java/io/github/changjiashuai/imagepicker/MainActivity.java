@@ -7,6 +7,7 @@ import android.view.View;
 
 import io.github.changjiashuai.ImagePicker;
 import io.github.changjiashuai.ui.ImageGridActivity;
+import io.github.changjiashuai.ui.ImagePreviewActivity;
 import io.github.changjiashuai.widget.CropImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,9 +26,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+                boolean isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                if (data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS) != null) {
+                }
+            }
+        }
+    }
+
     /**
      * 初始化仿微信控件ImagePicker
      */
+
     private void initImagePicker() {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoder());   //设置图片加载器

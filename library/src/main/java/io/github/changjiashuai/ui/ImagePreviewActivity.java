@@ -24,11 +24,12 @@ import io.github.changjiashuai.widget.ViewPagerFixed;
 public class ImagePreviewActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private ImagePicker mImagePicker;
-    private ArrayList<ImageItem> mImageItems;      //跳转进ImagePreviewFragment的图片文件夹
-    private int mCurrentPosition = 0;              //跳转进ImagePreviewFragment时的序号，第几个图片
+    private ArrayList<ImageItem> mImageItems;      //跳转进ImagePreviewFragment的图片文件夹下所有的图片
+    private int mCurrentPosition = 0;              //跳转进ImagePreviewFragment时的序号，改文件夹下第几个图片
     private TextView mTitleCount;                  //显示当前图片的位置  例如  5/31
+    private boolean mShowSelected = false;
     private ArrayList<ImageItem> mSelectedImages;   //所有已经选中的图片
-    private View content;
+    private View mContentLayout;
     private View topBar;
     private ViewPagerFixed mViewPager;
     private ImagePageAdapter mAdapter;
@@ -48,30 +49,19 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
 
         mImagePicker = ImagePicker.getInstance();
         mCurrentPosition = getIntent().getIntExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, 0);
-        mImageItems = (ArrayList<ImageItem>) getIntent()
-                .getSerializableExtra(ImagePicker.EXTRA_IMAGE_ITEMS);
-        if (mImageItems == null) {
+        mShowSelected = getIntent().getBooleanExtra(ImagePicker.EXTRA_SHOW_SELECTED, false);
+        if (mShowSelected) {
+            mImageItems = mImagePicker.getSelectedImages();
+        } else {
             mImageItems = mImagePicker.getCurrentImageFolderItems();
         }
         mSelectedImages = mImagePicker.getSelectedImages();
 
         //初始化控件
-        content = findViewById(R.id.content);
+        mContentLayout = findViewById(R.id.content);
 
         //因为状态栏透明后，布局整体会上移，所以给头部加上状态栏的margin值，保证头部不会被覆盖
         topBar = findViewById(R.id.top_bar);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) topBar.getLayoutParams();
-//            params.topMargin = Utils.getStatusHeight(this);
-//            topBar.setLayoutParams(params);
-//        }
-        topBar.findViewById(R.id.btn_ok).setVisibility(View.GONE);
-        topBar.findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         mTitleCount = (TextView) findViewById(R.id.tv_des);
 
@@ -87,17 +77,17 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         mViewPager.setCurrentItem(mCurrentPosition, false);
 
         //初始化当前页面的状态
-        mTitleCount.setText(getString(R.string.preview_image_count, mCurrentPosition + 1, mImageItems.size()));
+        mTitleCount.setText(getString(R.string.preview_image_count, mCurrentPosition + 1,
+                mImageItems.size()));
 
         isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
         mImagePicker.addOnImageSelectedListener(this);
 
+        topBar.findViewById(R.id.btn_back).setOnClickListener(this);
         mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
-        mBtnOk.setVisibility(View.VISIBLE);
         mBtnOk.setOnClickListener(this);
 
         bottomBar = findViewById(R.id.bottom_bar);
-        bottomBar.setVisibility(View.VISIBLE);
 
         mCbCheck = (AppCompatCheckBox) findViewById(R.id.cb_check);
         mCbOrigin = (AppCompatCheckBox) findViewById(R.id.cb_origin);
@@ -161,7 +151,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             tintManager.setStatusBarTintResource(R.color.transparent);//通知栏所需颜色
             //给最外层布局加上这个属性表示，Activity全屏显示，且状态栏被隐藏覆盖掉。
             if (Build.VERSION.SDK_INT >= 16) {
-                content.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                mContentLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
             }
         } else {
             topBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.top_in));
@@ -171,7 +161,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             tintManager.setStatusBarTintResource(R.color.status_bar);//通知栏所需颜色
             //Activity全屏显示，但状态栏不会被隐藏覆盖，状态栏依然可见，Activity顶端布局部分会被状态遮住
             if (Build.VERSION.SDK_INT >= 16) {
-                content.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                mContentLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             }
         }
     }
@@ -222,20 +212,21 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             setResult(ImagePicker.RESULT_CODE_ITEMS, intent);
             finish();
         } else if (id == R.id.btn_back) {
-            Intent intent = new Intent();
-            intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
-            setResult(ImagePicker.RESULT_CODE_BACK, intent);
-            finish();
+            finishWithResult();
         }
     }
 
     @Override
     public void onBackPressed() {
+        finishWithResult();
+        super.onBackPressed();
+    }
+
+    private void finishWithResult() {
         Intent intent = new Intent();
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
         setResult(ImagePicker.RESULT_CODE_BACK, intent);
         finish();
-        super.onBackPressed();
     }
 
     @Override
@@ -250,8 +241,9 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         if (id == R.id.cb_origin) {
             if (isChecked) {
                 long size = 0;
-                for (ImageItem item : mSelectedImages)
+                for (ImageItem item : mSelectedImages) {
                     size += item.size;
+                }
                 String fileSize = Formatter.formatFileSize(this, size);
                 isOrigin = true;
                 mCbOrigin.setText(getString(R.string.origin_size, fileSize));

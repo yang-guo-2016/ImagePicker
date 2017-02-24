@@ -19,8 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:background="#cc22292c"
-        android:visibility="gone">
+        android:background="#cc22292c">
 
         <android.support.v7.widget.AppCompatCheckBox
             android:theme="@style/ImagePickerTheme.CheckBox"

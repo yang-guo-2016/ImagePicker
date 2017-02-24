@@ -29,6 +29,7 @@ import io.github.changjiashuai.widget.TriangleDrawable;
 
 public class ImageGridActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, ImageDataSource.OnImagesLoadedListener, ImageGridAdapter.OnImageItemClickListener {
 
+    private static final String TAG = "ImageGridActivity";
     public static final int REQUEST_PERMISSION_STORAGE = 0x01;
     public static final int REQUEST_PERMISSION_CAMERA = 0x02;
 
@@ -60,7 +61,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         }
     }
 
-    private void initView(){
+    private void initView() {
         findViewById(R.id.btn_back).setOnClickListener(this);
         mBtnOk = (Button) findViewById(R.id.btn_ok);
         mBtnOk.setOnClickListener(this);
@@ -80,7 +81,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         }
     }
 
-    private void initData(){
+    private void initData() {
         ImagePicker.getInstance().clear();
         ImagePicker.getInstance().addOnImageSelectedListener(this);
         mImageGridAdapter = new ImageGridAdapter(this, null);
@@ -153,12 +154,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                 mFolderPopupWindow.setSelection(index);
             }
         } else if (id == R.id.btn_preview) {
-            Intent intent = new Intent(this, ImagePreviewActivity.class);
-            intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, 0);
-            intent.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS,
-                    ImagePicker.getInstance().getSelectedImages());
-            intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
-            startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);
+            viewToPreviewActivity(0, true);
         } else if (id == R.id.btn_back) {
             //点击返回按钮
             finish();
@@ -205,21 +201,23 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     public void onImageItemClick(View view, ImageItem imageItem, int position) {
         //根据是否有相机按钮确定位置
         position = ImagePicker.getInstance().isShowCamera() ? position - 1 : position;
+        // 选中去预览（选中的所有图片）， 为选择预览（当前文件夹里所有图片）
         if (ImagePicker.getInstance().isMultiMode()) {
-            Intent intent = new Intent(ImageGridActivity.this, ImagePreviewActivity.class);
-            intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
-            intent.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS,
-                    ImagePicker.getInstance().getCurrentImageFolderItems());
-            //imagePicker.getCurrentImageFolderItems()的数据量太大，android5以后会OOM但不会报错
-            intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
-            startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);  //如果是多选，点击图片进入预览界面
+            if (ImagePicker.getInstance().isSelect(imageItem)) {
+                // item selected show selected all image position=size-1
+                position = ImagePicker.getInstance().getSelectImageCount() - 1;
+                viewToPreviewActivity(position, true);
+            } else {
+                // item unselected show current folder all image
+                viewToPreviewActivity(position, false);
+            }
         } else {
+            //  单选裁剪或返回
             ImagePicker.getInstance().clearSelectedImages();
             ImagePicker.getInstance().addSelectedImageItem(position,
                     ImagePicker.getInstance().getCurrentImageFolderItems().get(position), true);
             if (ImagePicker.getInstance().isCrop()) {
-                Intent intent = new Intent(ImageGridActivity.this, ImageCropActivity.class);
-                startActivityForResult(intent, ImagePicker.REQUEST_CODE_CROP);//单选需要裁剪，进入裁剪界面
+                viewToCropActivity();
             } else {
                 finishWithResult();
             }
@@ -254,8 +252,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                 ImagePicker.getInstance().clearSelectedImages();
                 ImagePicker.getInstance().addSelectedImageItem(0, imageItem, true);
                 if (ImagePicker.getInstance().isCrop()) {
-                    Intent intent = new Intent(ImageGridActivity.this, ImageCropActivity.class);
-                    startActivityForResult(intent, ImagePicker.REQUEST_CODE_CROP);  //单选需要裁剪，进入裁剪界面
+                    viewToCropActivity();
                 } else {
                     finishWithResult();
                 }
@@ -263,8 +260,20 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         }
     }
 
-    // 当前Activity 打开Preview
-    private void finishWithResult(){
+    private void viewToPreviewActivity(int position, boolean showSelected) {
+        Intent intent = new Intent(this, ImagePreviewActivity.class);
+        intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
+        intent.putExtra(ImagePicker.EXTRA_SHOW_SELECTED, showSelected);
+        intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
+        startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);  //如果是多选，点击图片进入预览界面
+    }
+
+    private void viewToCropActivity() {
+        Intent intent = new Intent(this, ImageCropActivity.class);
+        startActivityForResult(intent, ImagePicker.REQUEST_CODE_CROP);//单选需要裁剪，进入裁剪界面
+    }
+
+    private void finishWithResult() {
         Intent intent = new Intent();
         intent.putExtra(ImagePicker.EXTRA_RESULT_ITEMS,
                 ImagePicker.getInstance().getSelectedImages());
