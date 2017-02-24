@@ -20,7 +20,7 @@ public class GlideImageLoder implements ImageLoader {
         Glide.with(context)
                 .load(path)
                 .centerCrop()
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.drawable.default_image)
                 .crossFade()
                 .into(imageView);
     }
