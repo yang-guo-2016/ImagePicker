@@ -5,8 +5,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
 
 import io.github.changjiashuai.ImagePicker;
+import io.github.changjiashuai.bean.ImageItem;
 import io.github.changjiashuai.ui.ImageGridActivity;
 import io.github.changjiashuai.ui.ImagePreviewActivity;
 import io.github.changjiashuai.widget.CropImageView;
@@ -14,6 +20,7 @@ import io.github.changjiashuai.widget.CropImageView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private ImageView mIvImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, ImagePicker.REQUEST_CODE_PICK);
             }
         });
+        mIvImage = (ImageView) findViewById(R.id.iv_image);
     }
 
     @Override
@@ -39,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "onActivityResult: isOrigin=" + isOrigin);
                     Log.i(TAG, "onActivityResult: getSelectedImages" +
                             ImagePicker.getInstance().getSelectedImages());
+                    ArrayList<ImageItem> imageItems = ImagePicker.getInstance().getSelectedImages();
+                    if (imageItems.size()>0){
+                        ImageItem imageItem = imageItems.get(0);
+                        Glide.with(getApplicationContext())
+                                .load(imageItem.path)
+                                .into(mIvImage);
+                    }
                 }
             }
         }
@@ -53,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoder());   //设置图片加载器
         imagePicker.setShowCamera(true);  //显示拍照按钮
-        imagePicker.setMultiMode(true);
+        imagePicker.setMultiMode(false);
         imagePicker.setCrop(true);        //允许裁剪（单选才有效）
         imagePicker.setSaveRectangle(true); //是否按矩形区域保存
         imagePicker.setSelectLimit(9);    //选中数量限制

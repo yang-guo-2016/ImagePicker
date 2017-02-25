@@ -15,6 +15,6 @@
         android:gravity="center"
         android:text="@string/image_picker_take_photo"
         android:textColor="@color/image_picker_image_grid_camera_text_color"
-        android:textSize="14sp" />
+        android:textSize="12sp" />
 
 </RelativeLayout>
