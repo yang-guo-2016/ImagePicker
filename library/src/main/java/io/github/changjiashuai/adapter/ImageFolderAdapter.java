@@ -78,7 +78,7 @@ public class ImageFolderAdapter extends BaseAdapter {
 
         ImageFolder folder = getItem(position);
         holder.folderName.setText(folder.name);
-        holder.imageCount.setText(mActivity.getString(R.string.folder_image_count, folder.images.size()));
+        holder.imageCount.setText(mActivity.getString(R.string.image_picker_folder_image_count, folder.images.size()));
         mImagePicker.getImageLoader().displayImage(mActivity, folder.cover.path, holder.cover, mImageSize, mImageSize);
 
         if (lastSelected == position) {

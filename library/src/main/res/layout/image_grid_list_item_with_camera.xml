@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/camera"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@drawable/selector_grid_camera_bg">
 
     <TextView
@@ -14,8 +13,8 @@
         android:drawablePadding="6dp"
         android:drawableTop="@drawable/ic_camera"
         android:gravity="center"
-        android:text="拍摄照片"
-        android:textColor="#CDCECE"
-        android:textSize="14sp"/>
+        android:text="@string/image_picker_take_photo"
+        android:textColor="@color/image_picker_image_grid_camera_text_color"
+        android:textSize="14sp" />
 
 </RelativeLayout>

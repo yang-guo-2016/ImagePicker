@@ -16,7 +16,7 @@
         android:id="@+id/mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#88000000"
+        android:background="@color/image_picker_image_grid_list_item_mask_color"
         android:visibility="gone" />
 
     <android.support.v7.widget.AppCompatCheckBox

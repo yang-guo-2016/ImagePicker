@@ -141,8 +141,8 @@ public class ImageGridAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        final ImageItem imageItem = getItem(position);
 
+        final ImageItem imageItem = getItem(position);
         holder.ivThumb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,7 +156,7 @@ public class ImageGridAdapter extends BaseAdapter {
                 int selectLimit = mImagePicker.getSelectLimit();
                 if (holder.cbCheck.isChecked() && mSelectedImages.size() >= selectLimit) {
                     Toast.makeText(mActivity.getApplicationContext(),
-                            mActivity.getString(R.string.select_limit, selectLimit),
+                            mActivity.getString(R.string.image_picker_select_limit, selectLimit),
                             Toast.LENGTH_SHORT).show();
                     holder.cbCheck.setChecked(false);
                     holder.mask.setVisibility(View.GONE);
@@ -171,16 +171,17 @@ public class ImageGridAdapter extends BaseAdapter {
             holder.cbCheck.setVisibility(View.VISIBLE);
             boolean checked = mSelectedImages.contains(imageItem);
             if (checked) {
-                holder.mask.setVisibility(View.VISIBLE);
                 holder.cbCheck.setChecked(true);
+                holder.mask.setVisibility(View.VISIBLE);
             } else {
-                holder.mask.setVisibility(View.GONE);
                 holder.cbCheck.setChecked(false);
+                holder.mask.setVisibility(View.GONE);
             }
         } else {
             holder.cbCheck.setVisibility(View.GONE);
         }
-        mImagePicker.getImageLoader().displayImage(mActivity, imageItem.path, holder.ivThumb, mImageSize, mImageSize); //显示图片
+        mImagePicker.getImageLoader()
+                .displayImage(mActivity, imageItem.path, holder.ivThumb, mImageSize, mImageSize); //显示图片
         return convertView;
     }
 

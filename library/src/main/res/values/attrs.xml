@@ -11,16 +11,4 @@
             <enum name="circle" value="1"/>
         </attr>
     </declare-styleable>
-    <declare-styleable name="SuperCheckBox">
-        <attr name="duration" format="integer"/>
-        <attr name="stroke_width" format="dimension"/>
-        <attr name="color_tick" format="color"/>
-        <attr name="color_checked" format="color"/>
-        <attr name="color_unchecked" format="color"/>
-        <attr name="color_unchecked_stroke" format="color"/>
-    </declare-styleable>
-
-    <declare-styleable name="TriangleView">
-        <attr name="fillColor" format="color"/>
-    </declare-styleable>
 </resources>

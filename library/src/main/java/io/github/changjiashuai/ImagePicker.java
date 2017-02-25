@@ -27,6 +27,7 @@ import io.github.changjiashuai.widget.CropImageView;
 
 public class ImagePicker {
 
+    public static final int REQUEST_CODE_PICK = 1000;
     public static final int REQUEST_CODE_TAKE = 1001;
     public static final int REQUEST_CODE_CROP = 1002;
     public static final int REQUEST_CODE_PREVIEW = 1003;
@@ -155,7 +156,7 @@ public class ImagePicker {
         mImageLoader = imageLoader;
     }
 
-    public int getStyle() {
+    public @CropImageView.Style int getStyle() {
         return style;
     }
 
@@ -215,6 +216,10 @@ public class ImagePicker {
 
     public ArrayList<ImageItem> getSelectedImages() {
         return mSelectedImages;
+    }
+
+    public void setSelectedImages(ArrayList<ImageItem> selectedImages) {
+        mSelectedImages = selectedImages;
     }
 
     public void clearSelectedImages() {

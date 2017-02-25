@@ -2,13 +2,13 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000">
+    android:background="@color/image_picker_image_preview_background">
 
     <io.github.changjiashuai.widget.ViewPagerFixed
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000" />
+        android:background="@color/image_picker_image_preview_background" />
 
     <include
         android:id="@+id/top_bar"
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:background="#cc22292c">
+        android:background="@color/image_picker_image_preview_bottom_bar_background">
 
         <android.support.v7.widget.AppCompatCheckBox
             android:theme="@style/ImagePickerTheme.CheckBox"
@@ -30,7 +30,7 @@
             android:layout_marginLeft="10dp"
             android:paddingLeft="8dp"
             android:text="原图(3.07M)"
-            android:textColor="#FFF" />
+            android:textColor="@color/image_picker_image_preview_bottom_bar_origin_text_color" />
 
         <android.support.v7.widget.AppCompatCheckBox
             android:theme="@style/ImagePickerTheme.CheckBox"
@@ -43,7 +43,7 @@
             android:drawablePadding="4dp"
             android:includeFontPadding="true"
             android:paddingLeft="8dp"
-            android:text="选择"
-            android:textColor="#ffffff" />
+            android:text="@string/image_picker_select"
+            android:textColor="@color/image_picker_image_preview_bottom_bar_select_text_color" />
     </RelativeLayout>
 </RelativeLayout>

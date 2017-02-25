@@ -3,6 +3,7 @@ package io.github.changjiashuai.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -56,7 +57,8 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
             if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 new ImageDataSource(this, null, this);
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
             }
         }
     }
@@ -116,17 +118,21 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     @Override
     public void onImageSelected(int position, ImageItem imageItem, boolean isAdd) {
         if (ImagePicker.getInstance().getSelectImageCount() > 0) {
-            mBtnOk.setText(getString(R.string.select_complete,
+            mBtnOk.setText(getString(R.string.image_picker_select_complete,
                     ImagePicker.getInstance().getSelectImageCount(),
                     ImagePicker.getInstance().getSelectLimit()));
             mBtnOk.setEnabled(true);
+            mBtnOk.getBackground().setColorFilter(getResources()
+                    .getColor(R.color.image_picker_button_normal), PorterDuff.Mode.MULTIPLY);
             mBtnPreview.setEnabled(true);
         } else {
-            mBtnOk.setText(getString(R.string.complete));
+            mBtnOk.setText(getString(R.string.image_picker_complete));
             mBtnOk.setEnabled(false);
+            mBtnOk.getBackground().setColorFilter(getResources()
+                    .getColor(R.color.image_picker_button_disabled), PorterDuff.Mode.MULTIPLY);
             mBtnPreview.setEnabled(false);
         }
-        mBtnPreview.setText(getResources().getString(R.string.preview_count,
+        mBtnPreview.setText(getResources().getString(R.string.image_picker_preview_count,
                 ImagePicker.getInstance().getSelectImageCount()));
         mImageGridAdapter.notifyDataSetChanged();
     }
@@ -227,24 +233,9 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            if (resultCode == ImagePicker.RESULT_CODE_BACK) {
-                isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
-            } else {
-                //从拍照界面返回
-                //点击 X , 没有选择照片
-                if (data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS) == null) {
-                    //什么都不做
-                } else {
-                    //说明是从裁剪页面过来的数据，直接返回就可以
-                    data.putExtra(ImagePreviewActivity.ISORIGIN, true);
-                    setResult(ImagePicker.RESULT_CODE_ITEMS, data);
-                    finish();
-                }
-            }
-        } else {
-            //如果是裁剪，因为裁剪指定了存储的Uri，所以返回的data一定为null
-            if (resultCode == RESULT_OK && requestCode == ImagePicker.REQUEST_CODE_TAKE) {
+        if (requestCode == ImagePicker.REQUEST_CODE_TAKE) {
+            //拍照
+            if (resultCode == RESULT_OK) {
                 //发送广播通知图片增加了
                 ImagePicker.galleryAddPic(this, ImagePicker.getInstance().getTakeImageFile());
                 ImageItem imageItem = new ImageItem();
@@ -256,6 +247,19 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                 } else {
                     finishWithResult();
                 }
+            }
+        } else if (requestCode == ImagePicker.REQUEST_CODE_CROP) {
+            //裁剪
+            finishWithResult();
+        } else if (requestCode == ImagePicker.REQUEST_CODE_PREVIEW) {
+            //预览
+            if (resultCode == ImagePicker.RESULT_CODE_BACK) {
+                isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                // 直接从预览返回
+            } else if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+                isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                // 在预览界面选择后确定返回
+                finishWithResult();
             }
         }
     }
@@ -274,9 +278,8 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     }
 
     private void finishWithResult() {
+        Log.i(TAG, "finishWithResult: ");
         Intent intent = new Intent();
-        intent.putExtra(ImagePicker.EXTRA_RESULT_ITEMS,
-                ImagePicker.getInstance().getSelectedImages());
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
         setResult(ImagePicker.RESULT_CODE_ITEMS, intent);   //单选不需要裁剪，返回数据
         finish();

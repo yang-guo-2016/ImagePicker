@@ -19,8 +19,8 @@ public class GlideImageLoder implements ImageLoader {
     public void displayImage(Context context, String path, ImageView imageView, int width, int height) {
         Glide.with(context)
                 .load(path)
-                .fitCenter()
-                .placeholder(R.drawable.default_image)
+                .centerCrop()
+//                .placeholder(R.drawable.default_image)
                 .into(imageView);
     }
 

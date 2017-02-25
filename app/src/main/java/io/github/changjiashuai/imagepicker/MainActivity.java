@@ -3,6 +3,7 @@ package io.github.changjiashuai.imagepicker;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import io.github.changjiashuai.ImagePicker;
@@ -11,6 +12,8 @@ import io.github.changjiashuai.ui.ImagePreviewActivity;
 import io.github.changjiashuai.widget.CropImageView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,21 +24,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ImageGridActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, ImagePicker.REQUEST_CODE_PICK);
             }
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
-                boolean isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
-                if (data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS) != null) {
+        Log.i(TAG, "onActivityResult: ");
+        if (requestCode == ImagePicker.REQUEST_CODE_PICK) {
+            if (data != null) {
+                if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+                    boolean isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                    Log.i(TAG, "onActivityResult: isOrigin=" + isOrigin);
+                    Log.i(TAG, "onActivityResult: getSelectedImages" +
+                            ImagePicker.getInstance().getSelectedImages());
                 }
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         ImagePicker imagePicker = ImagePicker.getInstance();
         imagePicker.setImageLoader(new GlideImageLoder());   //设置图片加载器
         imagePicker.setShowCamera(true);  //显示拍照按钮
+        imagePicker.setMultiMode(true);
         imagePicker.setCrop(true);        //允许裁剪（单选才有效）
         imagePicker.setSaveRectangle(true); //是否按矩形区域保存
         imagePicker.setSelectLimit(9);    //选中数量限制

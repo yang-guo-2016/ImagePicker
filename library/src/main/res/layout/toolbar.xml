@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="#303135"
+    android:background="@color/image_picker_toolbar_background"
     android:clickable="true">
 
     <ImageView
@@ -20,7 +20,7 @@
         android:layout_marginBottom="12dp"
         android:layout_marginTop="12dp"
         android:layout_toRightOf="@id/btn_back"
-        android:background="#cc111111" />
+        android:background="@color/image_picker_toolbar_background" />
 
     <TextView
         android:id="@+id/tv_des"
@@ -29,13 +29,12 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/btn_back"
-        android:text="选择图片"
-        android:textColor="#ffffff"
-        android:textSize="16dp" />
+        android:text="@string/image_picker_select_images"
+        android:textColor="@color/image_picker_toolbar_title_text_color"
+        android:textSize="16sp" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/btn_ok"
-        android:theme="@style/ImagePickerTheme.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -43,8 +42,9 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="完成(3/9)"
-        android:textColor="#ffffff"
-        android:textSize="14sp" />
+        android:textColor="@color/image_picker_toolbar_button_text_color"
+        android:textSize="14sp"
+        android:theme="@style/ImagePickerTheme.Button" />
 
     <ImageView
         android:id="@+id/btn_del"

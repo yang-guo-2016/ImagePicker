@@ -32,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.status_bar);  //设置上方状态栏的颜色
+        tintManager.setStatusBarTintResource(R.color.image_picker_status_bar);  //设置上方状态栏的颜色
     }
 
     @TargetApi(19)

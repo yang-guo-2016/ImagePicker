@@ -1,11 +1,13 @@
 package io.github.changjiashuai.ui;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -23,6 +25,7 @@ import io.github.changjiashuai.widget.ViewPagerFixed;
 
 public class ImagePreviewActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
+    private static final String TAG = "ImagePreviewActivity";
     private ImagePicker mImagePicker;
     private ArrayList<ImageItem> mImageItems;      //跳转进ImagePreviewFragment的图片文件夹下所有的图片
     private int mCurrentPosition = 0;              //跳转进ImagePreviewFragment时的序号，改文件夹下第几个图片
@@ -77,7 +80,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         mViewPager.setCurrentItem(mCurrentPosition, false);
 
         //初始化当前页面的状态
-        mTitleCount.setText(getString(R.string.preview_image_count, mCurrentPosition + 1,
+        mTitleCount.setText(getString(R.string.image_picker_preview_image_count, mCurrentPosition + 1,
                 mImageItems.size()));
 
         isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
@@ -91,7 +94,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
 
         mCbCheck = (AppCompatCheckBox) findViewById(R.id.cb_check);
         mCbOrigin = (AppCompatCheckBox) findViewById(R.id.cb_origin);
-        mCbOrigin.setText(getString(R.string.origin));
+        mCbOrigin.setText(getString(R.string.image_picker_origin));
         mCbOrigin.setOnCheckedChangeListener(this);
         mCbOrigin.setChecked(isOrigin);
 
@@ -99,7 +102,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         onImageSelected(0, null, false);
         ImageItem item = mImageItems.get(mCurrentPosition);
         boolean isSelected = mImagePicker.isSelect(item);
-        mTitleCount.setText(getString(R.string.preview_image_count,
+        mTitleCount.setText(getString(R.string.image_picker_preview_image_count,
                 mCurrentPosition + 1, mImageItems.size()));
         mCbCheck.setChecked(isSelected);
         updateOriginImageSize();
@@ -111,7 +114,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
                 ImageItem item = mImageItems.get(mCurrentPosition);
                 boolean isSelected = mImagePicker.isSelect(item);
                 mCbCheck.setChecked(isSelected);
-                mTitleCount.setText(getString(R.string.preview_image_count,
+                mTitleCount.setText(getString(R.string.image_picker_preview_image_count,
                         mCurrentPosition + 1, mImageItems.size()));
             }
         });
@@ -122,7 +125,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
                 ImageItem imageItem = mImageItems.get(mCurrentPosition);
                 int selectLimit = mImagePicker.getSelectLimit();
                 if (mCbCheck.isChecked() && mSelectedImages.size() >= selectLimit) {
-                    showToast(ImagePreviewActivity.this.getString(R.string.select_limit, selectLimit));
+                    showToast(ImagePreviewActivity.this.getString(R.string.image_picker_select_limit, selectLimit));
                     mCbCheck.setChecked(false);
                 } else {
                     mImagePicker.addSelectedImageItem(mCurrentPosition, imageItem, mCbCheck.isChecked());
@@ -131,7 +134,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
                     if (mSelectedImages != null && mSelectedImages.size() > 0) {
                         updateOriginImageSize();
                     } else {
-                        mCbOrigin.setText(getString(R.string.origin));
+                        mCbOrigin.setText(getString(R.string.image_picker_origin));
                     }
                 }
             }
@@ -148,7 +151,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             bottomBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
             topBar.setVisibility(View.GONE);
             bottomBar.setVisibility(View.GONE);
-            tintManager.setStatusBarTintResource(R.color.transparent);//通知栏所需颜色
+            tintManager.setStatusBarTintResource(android.R.color.transparent);//通知栏所需颜色
             //给最外层布局加上这个属性表示，Activity全屏显示，且状态栏被隐藏覆盖掉。
             if (Build.VERSION.SDK_INT >= 16) {
                 mContentLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -158,7 +161,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             bottomBar.setAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
             topBar.setVisibility(View.VISIBLE);
             bottomBar.setVisibility(View.VISIBLE);
-            tintManager.setStatusBarTintResource(R.color.status_bar);//通知栏所需颜色
+            tintManager.setStatusBarTintResource(R.color.image_picker_status_bar);//通知栏所需颜色
             //Activity全屏显示，但状态栏不会被隐藏覆盖，状态栏依然可见，Activity顶端布局部分会被状态遮住
             if (Build.VERSION.SDK_INT >= 16) {
                 mContentLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -173,9 +176,9 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         }
         if (size > 0) {
             String fileSize = Formatter.formatFileSize(this, size);
-            mCbOrigin.setText(getString(R.string.origin_size, fileSize));
+            mCbOrigin.setText(getString(R.string.image_picker_origin_size, fileSize));
         } else {
-            mCbOrigin.setText(getString(R.string.origin));
+            mCbOrigin.setText(getString(R.string.image_picker_origin));
         }
     }
 
@@ -185,12 +188,16 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     @Override
     public void onImageSelected(int position, ImageItem item, boolean isAdd) {
         if (mImagePicker.getSelectImageCount() > 0) {
-            mBtnOk.setText(getString(R.string.select_complete,
+            mBtnOk.setText(getString(R.string.image_picker_select_complete,
                     mImagePicker.getSelectImageCount(), mImagePicker.getSelectLimit()));
             mBtnOk.setEnabled(true);
+            mBtnOk.getBackground().setColorFilter(getResources()
+                    .getColor(R.color.image_picker_button_normal), PorterDuff.Mode.MULTIPLY);
         } else {
-            mBtnOk.setText(getString(R.string.complete));
+            mBtnOk.setText(getString(R.string.image_picker_complete));
             mBtnOk.setEnabled(false);
+            mBtnOk.getBackground().setColorFilter(getResources()
+                    .getColor(R.color.image_picker_button_disabled), PorterDuff.Mode.MULTIPLY);
         }
 
 //        if (mCbOrigin.isChecked()) {
@@ -223,6 +230,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     }
 
     private void finishWithResult() {
+        Log.i(TAG, "finishWithResult: ");
         Intent intent = new Intent();
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
         setResult(ImagePicker.RESULT_CODE_BACK, intent);
@@ -246,10 +254,10 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
                 }
                 String fileSize = Formatter.formatFileSize(this, size);
                 isOrigin = true;
-                mCbOrigin.setText(getString(R.string.origin_size, fileSize));
+                mCbOrigin.setText(getString(R.string.image_picker_origin_size, fileSize));
             } else {
                 isOrigin = false;
-                mCbOrigin.setText(getString(R.string.origin));
+                mCbOrigin.setText(getString(R.string.image_picker_origin));
             }
         }
     }
