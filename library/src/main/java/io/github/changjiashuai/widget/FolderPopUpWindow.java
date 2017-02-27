@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -26,15 +25,10 @@ import io.github.changjiashuai.library.R;
 public class FolderPopUpWindow extends PopupWindow implements View.OnClickListener {
 
     public interface OnItemClickListener {
-        void onItemClick(AdapterView<?> adapterView, View view, int position, long id);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+        void onItemClick(View view, int position);
     }
 
     private ListView listView;
-    private OnItemClickListener onItemClickListener;
     private final View masker;
     private final View marginView;
     private int marginPx;
@@ -69,14 +63,6 @@ public class FolderPopUpWindow extends PopupWindow implements View.OnClickListen
                 marginParams.height = marginPx;
                 marginView.setLayoutParams(marginParams);
                 enterAnimator();
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(adapterView, view, position, id);
-                }
             }
         });
     }

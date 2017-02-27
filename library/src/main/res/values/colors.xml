@@ -37,6 +37,9 @@
     <color name="image_picker_checkbox_normal">@android:color/darker_gray</color>
     <color name="image_picker_checkbox_selected">@color/kelly_green</color>
 
+    <color name="image_picker_radiobutton_normal">@android:color/darker_gray</color>
+    <color name="image_picker_radiobutton_selected">@color/kelly_green</color>
+
     <color name="image_picker_button_normal">@color/napier_green</color>
     <color name="image_picker_button_disabled">#7fa87f</color>
     <color name="image_picker_button_selected">@color/kelly_green</color>

@@ -25,7 +25,6 @@ public class ImagePageAdapter extends PagerAdapter {
 
     private int screenWidth;
     private int screenHeight;
-    private ImagePicker mImagePicker;
     private ArrayList<ImageItem> images = new ArrayList<>();
     private Activity mActivity;
     public PhotoViewClickListener listener;
@@ -36,7 +35,6 @@ public class ImagePageAdapter extends PagerAdapter {
         DisplayMetrics dm = Utils.getScreenPix(activity);
         screenWidth = dm.widthPixels;
         screenHeight = dm.heightPixels;
-        mImagePicker = ImagePicker.getInstance();
     }
 
     public void setImages(ArrayList<ImageItem> images) {
@@ -51,7 +49,7 @@ public class ImagePageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         PhotoView photoView = new PhotoView(mActivity);
         ImageItem imageItem = images.get(position);
-        mImagePicker.getImageLoader()
+        ImagePicker.getInstance().getImageLoader()
                 .displayImage(mActivity, imageItem.path, photoView, screenWidth, screenHeight);
         photoView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
             @Override

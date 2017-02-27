@@ -14,6 +14,11 @@
         <item name="colorControlActivated">@color/image_picker_checkbox_selected</item>
     </style>
 
+    <style name="ImagePickerTheme.RadioButton" parent="ImagePickerTheme">
+        <item name="colorControlNormal">@color/image_picker_radiobutton_normal</item>
+        <item name="colorControlActivated">@color/image_picker_radiobutton_selected</item>
+    </style>
+
     <style name="ImagePickerTheme.Button" parent="ImagePickerTheme">
         <!--正常状态下的颜色  -->
         <item name="colorButtonNormal">@color/image_picker_button_normal</item>

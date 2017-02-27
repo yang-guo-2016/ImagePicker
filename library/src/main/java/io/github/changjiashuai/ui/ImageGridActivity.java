@@ -11,7 +11,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 
@@ -34,16 +33,26 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     public static final int REQUEST_PERMISSION_STORAGE = 0x01;
     public static final int REQUEST_PERMISSION_CAMERA = 0x02;
 
-    private boolean isOrigin = false;  //是否选中原图
-    private GridView mGridView;  //图片展示控件
-    private View mFooterBar;     //底部栏
-    private Button mBtnOk;       //确定按钮
-    private Button mBtnDir;      //文件夹切换按钮
-    private Button mBtnPreview;      //预览按钮
-    private ImageFolderAdapter mImageFolderAdapter;    //图片文件夹的适配器
-    private FolderPopUpWindow mFolderPopupWindow;  //ImageSet的PopupWindow
-    private List<ImageFolder> mImageFolders;   //所有的图片文件夹
-    private ImageGridAdapter mImageGridAdapter;  //图片九宫格展示的适配器
+    /*是否选中原图*/
+    private boolean isOrigin = false;
+    /*图片展示控件*/
+    private GridView mGridView;
+    /*底部栏*/
+    private View mFooterBar;
+    /*确定按钮*/
+    private Button mBtnOk;
+    /*文件夹切换按钮*/
+    private Button mBtnDir;
+    /*预览按钮*/
+    private Button mBtnPreview;
+    /*图片文件夹的适配器*/
+    private ImageFolderAdapter mImageFolderAdapter;
+    /*ImageSet的PopupWindow*/
+    private FolderPopUpWindow mFolderPopupWindow;
+    /*所有的图片文件夹*/
+    private List<ImageFolder> mImageFolders;
+    /*图片展示的适配器*/
+    private ImageGridAdapter mImageGridAdapter;
 
 
     @Override
@@ -89,8 +98,22 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     private void initData() {
         ImagePicker.getInstance().clear();
         ImagePicker.getInstance().addOnImageSelectedListener(this);
-        mImageGridAdapter = new ImageGridAdapter(this, null);
-        mImageFolderAdapter = new ImageFolderAdapter(this, null);
+        mImageGridAdapter = new ImageGridAdapter(this);
+        mImageFolderAdapter = new ImageFolderAdapter(this, new FolderPopUpWindow
+                .OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                mImageFolderAdapter.setSelectIndex(position);
+                ImagePicker.getInstance().setCurrentImageFolderPosition(position);
+                mFolderPopupWindow.dismiss();
+                ImageFolder imageFolder = mImageFolderAdapter.getItem(position);
+                if (null != imageFolder) {
+                    mImageGridAdapter.refreshData(imageFolder.images);
+                    mBtnDir.setText(imageFolder.name);
+                }
+                mGridView.smoothScrollToPosition(0);//滑动到顶部
+            }
+        });
         onImageSelected(0, null, false);
     }
 
@@ -146,22 +169,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         if (id == R.id.btn_ok) {
             finishWithResult();
         } else if (id == R.id.btn_dir) {
-            if (mImageFolders == null) {
-                Log.i("ImageGridActivity", "您的手机没有图片");
-                return;
-            }
-            //点击文件夹按钮
-            createPopupFolderList();
-            mImageFolderAdapter.refreshData(mImageFolders);  //刷新数据
-            if (mFolderPopupWindow.isShowing()) {
-                mFolderPopupWindow.dismiss();
-            } else {
-                mFolderPopupWindow.showAtLocation(mFooterBar, Gravity.NO_GRAVITY, 0, 0);
-                //默认选择当前选择的上一个，当目录很多时，直接定位到已选中的条目
-                int index = mImageFolderAdapter.getSelectIndex();
-                index = index == 0 ? index : index - 1;
-                mFolderPopupWindow.setSelection(index);
-            }
+            changeImageDir();
         } else if (id == R.id.btn_preview) {
             viewToPreviewActivity(0, true);
         } else if (id == R.id.btn_back) {
@@ -170,26 +178,31 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         }
     }
 
+    private void changeImageDir() {
+        if (mImageFolders == null) {
+            Log.i("ImageGridActivity", "您的手机没有图片");
+            return;
+        }
+        //点击文件夹按钮
+        showPopupFolderWindow();
+    }
+
     /**
      * 创建弹出的ListView
      */
-    private void createPopupFolderList() {
+    private void showPopupFolderWindow() {
         mFolderPopupWindow = new FolderPopUpWindow(this, mImageFolderAdapter);
-        mFolderPopupWindow.setOnItemClickListener(new FolderPopUpWindow.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                mImageFolderAdapter.setSelectIndex(position);
-                ImagePicker.getInstance().setCurrentImageFolderPosition(position);
-                mFolderPopupWindow.dismiss();
-                ImageFolder imageFolder = (ImageFolder) adapterView.getAdapter().getItem(position);
-                if (null != imageFolder) {
-                    mImageGridAdapter.refreshData(imageFolder.images);
-                    mBtnDir.setText(imageFolder.name);
-                }
-                mGridView.smoothScrollToPosition(0);//滑动到顶部
-            }
-        });
         mFolderPopupWindow.setMargin(mFooterBar.getHeight());
+        mImageFolderAdapter.refreshData(mImageFolders);  //刷新数据
+        if (mFolderPopupWindow.isShowing()) {
+            mFolderPopupWindow.dismiss();
+        } else {
+            mFolderPopupWindow.showAtLocation(mFooterBar, Gravity.NO_GRAVITY, 0, 0);
+            //默认选择当前选择的上一个，当目录很多时，直接定位到已选中的条目
+            int index = mImageFolderAdapter.getSelectIndex();
+            index = index == 0 ? index : index - 1;
+            mFolderPopupWindow.setSelection(index);
+        }
     }
 
     @Override

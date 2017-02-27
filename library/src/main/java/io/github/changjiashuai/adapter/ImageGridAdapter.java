@@ -35,7 +35,6 @@ public class ImageGridAdapter extends BaseAdapter {
     private static final int ITEM_TYPE_CAMERA = 0;  //第一个条目是相机
     private static final int ITEM_TYPE_NORMAL = 1;  //第一个条目不是相机
 
-    private ImagePicker mImagePicker;
     private Activity mActivity;
     private ArrayList<ImageItem> mImageItems;       //当前需要显示的所有的图片数据
     private ArrayList<ImageItem> mSelectedImages;   //全局保存的已经选中的图片数据
@@ -43,13 +42,12 @@ public class ImageGridAdapter extends BaseAdapter {
     private int mImageSize;                         //每个条目的大小
     private OnImageItemClickListener mOnImageItemClickListener; //图片被点击的监听
 
-    public ImageGridAdapter(@NonNull Activity activity, @NonNull ArrayList<ImageItem> imageItems) {
+    public ImageGridAdapter(@NonNull Activity activity) {
         mActivity = activity;
-        mImageItems = imageItems;
+        mImageItems = new ArrayList<>();
         mImageSize = Utils.getImageItemWidth(mActivity);
-        mImagePicker = ImagePicker.getInstance();
-        isShowCamera = mImagePicker.isShowCamera();
-        mSelectedImages = mImagePicker.getSelectedImages();
+        isShowCamera = ImagePicker.getInstance().isShowCamera();
+        mSelectedImages = ImagePicker.getInstance().getSelectedImages();
     }
 
     public void refreshData(ArrayList<ImageItem> imageItems) {
@@ -122,7 +120,7 @@ public class ImageGridAdapter extends BaseAdapter {
                             new String[]{Manifest.permission.CAMERA},
                             ImageGridActivity.REQUEST_PERMISSION_CAMERA);
                 } else {
-                    mImagePicker.takePicture(mActivity, ImagePicker.REQUEST_CODE_TAKE);
+                    ImagePicker.getInstance().takePicture(mActivity, ImagePicker.REQUEST_CODE_TAKE);
                 }
             }
         });
@@ -153,7 +151,7 @@ public class ImageGridAdapter extends BaseAdapter {
         holder.cbCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int selectLimit = mImagePicker.getSelectLimit();
+                int selectLimit = ImagePicker.getInstance().getSelectLimit();
                 if (holder.cbCheck.isChecked() && mSelectedImages.size() >= selectLimit) {
                     Toast.makeText(mActivity.getApplicationContext(),
                             mActivity.getString(R.string.image_picker_select_limit, selectLimit),
@@ -161,13 +159,14 @@ public class ImageGridAdapter extends BaseAdapter {
                     holder.cbCheck.setChecked(false);
                     holder.mask.setVisibility(View.GONE);
                 } else {
-                    mImagePicker.addSelectedImageItem(position, imageItem, holder.cbCheck.isChecked());
+                    ImagePicker.getInstance()
+                            .addSelectedImageItem(position, imageItem, holder.cbCheck.isChecked());
                     holder.mask.setVisibility(View.VISIBLE);
                 }
             }
         });
         //根据是否多选，显示或隐藏checkbox
-        if (mImagePicker.isMultiMode()) {
+        if (ImagePicker.getInstance().isMultiMode()) {
             holder.cbCheck.setVisibility(View.VISIBLE);
             boolean checked = mSelectedImages.contains(imageItem);
             if (checked) {
@@ -180,7 +179,7 @@ public class ImageGridAdapter extends BaseAdapter {
         } else {
             holder.cbCheck.setVisibility(View.GONE);
         }
-        mImagePicker.getImageLoader()
+        ImagePicker.getInstance().getImageLoader()
                 .displayImage(mActivity, imageItem.path, holder.ivThumb, mImageSize, mImageSize); //显示图片
         return convertView;
     }

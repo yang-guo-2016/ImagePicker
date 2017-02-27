@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -26,23 +25,26 @@ import io.github.changjiashuai.widget.ViewPagerFixed;
 public class ImagePreviewActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "ImagePreviewActivity";
-    private ImagePicker mImagePicker;
-    private ArrayList<ImageItem> mImageItems;      //跳转进ImagePreviewFragment的图片文件夹下所有的图片
-    private int mCurrentPosition = 0;              //跳转进ImagePreviewFragment时的序号，改文件夹下第几个图片
-    private TextView mTitleCount;                  //显示当前图片的位置  例如  5/31
-    private boolean mShowSelected = false;
-    private ArrayList<ImageItem> mSelectedImages;   //所有已经选中的图片
+    /*跳转进ImagePreviewFragment的图片文件夹下所有的图片*/
+    private ArrayList<ImageItem> mImageItems;
+    /*跳转进ImagePreviewFragment时的序号，改文件夹下第几个图片*/
+    private int mCurrentPosition = 0;
+    /*显示当前图片的位置  例如  5/31 */
+    private TextView mTitleCount;
+    /*所有已经选中的图片*/
+    private ArrayList<ImageItem> mSelectedImages;
     private View mContentLayout;
     private View topBar;
-    private ViewPagerFixed mViewPager;
-    private ImagePageAdapter mAdapter;
 
     public static final String ISORIGIN = "isOrigin";
-
-    private boolean isOrigin;                      //是否选中原图
-    private AppCompatCheckBox mCbCheck;                //是否选中当前图片的CheckBox
-    private AppCompatCheckBox mCbOrigin;               //原图
-    private Button mBtnOk;                         //确认图片的选择
+    /*是否选中原图*/
+    private boolean isOrigin;
+    /*是否选中当前图片的CheckBox*/
+    private AppCompatCheckBox mCbCheck;
+    /*原图*/
+    private AppCompatCheckBox mCbOrigin;
+    /*确认图片的选择*/
+    private Button mBtnOk;
     private View bottomBar;
 
     @Override
@@ -50,15 +52,14 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
 
-        mImagePicker = ImagePicker.getInstance();
         mCurrentPosition = getIntent().getIntExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, 0);
-        mShowSelected = getIntent().getBooleanExtra(ImagePicker.EXTRA_SHOW_SELECTED, false);
-        if (mShowSelected) {
-            mImageItems = mImagePicker.getSelectedImages();
+        boolean showSelected = getIntent().getBooleanExtra(ImagePicker.EXTRA_SHOW_SELECTED, false);
+        if (showSelected) {
+            mImageItems = ImagePicker.getInstance().getSelectedImages();
         } else {
-            mImageItems = mImagePicker.getCurrentImageFolderItems();
+            mImageItems = ImagePicker.getInstance().getCurrentImageFolderItems();
         }
-        mSelectedImages = mImagePicker.getSelectedImages();
+        mSelectedImages = ImagePicker.getInstance().getSelectedImages();
 
         //初始化控件
         mContentLayout = findViewById(R.id.content);
@@ -68,23 +69,23 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
 
         mTitleCount = (TextView) findViewById(R.id.tv_des);
 
-        mViewPager = (ViewPagerFixed) findViewById(R.id.viewpager);
-        mAdapter = new ImagePageAdapter(this, mImageItems);
-        mAdapter.setPhotoViewClickListener(new ImagePageAdapter.PhotoViewClickListener() {
+        ViewPagerFixed viewPager = (ViewPagerFixed) findViewById(R.id.viewpager);
+        ImagePageAdapter adapter = new ImagePageAdapter(this, mImageItems);
+        adapter.setPhotoViewClickListener(new ImagePageAdapter.PhotoViewClickListener() {
             @Override
             public void OnPhotoTapListener(View view, float v, float v1) {
                 onImageSingleTap();
             }
         });
-        mViewPager.setAdapter(mAdapter);
-        mViewPager.setCurrentItem(mCurrentPosition, false);
+        viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(mCurrentPosition, false);
 
         //初始化当前页面的状态
         mTitleCount.setText(getString(R.string.image_picker_preview_image_count, mCurrentPosition + 1,
                 mImageItems.size()));
 
         isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
-        mImagePicker.addOnImageSelectedListener(this);
+        ImagePicker.getInstance().addOnImageSelectedListener(this);
 
         topBar.findViewById(R.id.btn_back).setOnClickListener(this);
         mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
@@ -101,18 +102,18 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         //初始化当前页面的状态
         onImageSelected(0, null, false);
         ImageItem item = mImageItems.get(mCurrentPosition);
-        boolean isSelected = mImagePicker.isSelect(item);
+        boolean isSelected = ImagePicker.getInstance().isSelect(item);
         mTitleCount.setText(getString(R.string.image_picker_preview_image_count,
                 mCurrentPosition + 1, mImageItems.size()));
         mCbCheck.setChecked(isSelected);
         updateOriginImageSize();
         //滑动ViewPager的时候，根据外界的数据改变当前的选中状态和当前的图片的位置描述文本
-        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 mCurrentPosition = position;
                 ImageItem item = mImageItems.get(mCurrentPosition);
-                boolean isSelected = mImagePicker.isSelect(item);
+                boolean isSelected = ImagePicker.getInstance().isSelect(item);
                 mCbCheck.setChecked(isSelected);
                 mTitleCount.setText(getString(R.string.image_picker_preview_image_count,
                         mCurrentPosition + 1, mImageItems.size()));
@@ -123,12 +124,13 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             @Override
             public void onClick(View v) {
                 ImageItem imageItem = mImageItems.get(mCurrentPosition);
-                int selectLimit = mImagePicker.getSelectLimit();
+                int selectLimit = ImagePicker.getInstance().getSelectLimit();
                 if (mCbCheck.isChecked() && mSelectedImages.size() >= selectLimit) {
                     showToast(ImagePreviewActivity.this.getString(R.string.image_picker_select_limit, selectLimit));
                     mCbCheck.setChecked(false);
                 } else {
-                    mImagePicker.addSelectedImageItem(mCurrentPosition, imageItem, mCbCheck.isChecked());
+                    ImagePicker.getInstance()
+                            .addSelectedImageItem(mCurrentPosition, imageItem, mCbCheck.isChecked());
 
                     //每次选择一张图片就计算一次图片总大小
                     if (mSelectedImages != null && mSelectedImages.size() > 0) {
@@ -187,9 +189,9 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
      */
     @Override
     public void onImageSelected(int position, ImageItem item, boolean isAdd) {
-        if (mImagePicker.getSelectImageCount() > 0) {
+        if (ImagePicker.getInstance().getSelectImageCount() > 0) {
             mBtnOk.setText(getString(R.string.image_picker_select_complete,
-                    mImagePicker.getSelectImageCount(), mImagePicker.getSelectLimit()));
+                    ImagePicker.getInstance().getSelectImageCount(), ImagePicker.getInstance().getSelectLimit()));
             mBtnOk.setEnabled(true);
             mBtnOk.getBackground().setColorFilter(getResources()
                     .getColor(R.color.image_picker_button_normal), PorterDuff.Mode.MULTIPLY);
@@ -213,33 +215,28 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_ok) {
-            Intent intent = new Intent();
-            intent.putExtra(ImagePicker.EXTRA_RESULT_ITEMS, mImagePicker.getSelectedImages());
-            intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
-            setResult(ImagePicker.RESULT_CODE_ITEMS, intent);
-            finish();
+            finishWithResult(ImagePicker.RESULT_CODE_ITEMS);
         } else if (id == R.id.btn_back) {
-            finishWithResult();
+            finishWithResult(ImagePicker.RESULT_CODE_BACK);
         }
     }
 
     @Override
     public void onBackPressed() {
-        finishWithResult();
+        finishWithResult(ImagePicker.RESULT_CODE_BACK);
         super.onBackPressed();
     }
 
-    private void finishWithResult() {
-        Log.i(TAG, "finishWithResult: ");
+    private void finishWithResult(int resultCode) {
         Intent intent = new Intent();
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
-        setResult(ImagePicker.RESULT_CODE_BACK, intent);
+        setResult(resultCode, intent);
         finish();
     }
 
     @Override
     protected void onDestroy() {
-        mImagePicker.removeOnImageSelectedListener(this);
+        ImagePicker.getInstance().removeOnImageSelectedListener(this);
         super.onDestroy();
     }
 

@@ -34,9 +34,7 @@ public class ImagePicker {
     public static final int RESULT_CODE_ITEMS = 1004;
     public static final int RESULT_CODE_BACK = 1005;
 
-    public static final String EXTRA_RESULT_ITEMS = "extra_result_items";
     public static final String EXTRA_SELECTED_IMAGE_POSITION = "extra_selected_image_position";
-    public static final String EXTRA_IMAGE_ITEMS = "extra_image_items";
     public static final String EXTRA_SHOW_SELECTED = "extra_show_selected";
 
     private boolean multiMode = true;               //图片选择模式
