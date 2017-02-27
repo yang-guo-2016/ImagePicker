@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="PRESSED_STATE_COLOR">#ff5a595b</color>
+    <color name="FOCUSED_STATE_COLOR">#ff5a595b</color>
+    <color name="NORMAL_STATE_COLOR">#ffd6d7d7</color>
 
     <color name="image_picker_checkbox_normal">@color/colorAccent</color>
+    <color name="image_picker_image_grid_bottom_bar_button_dir_indicator_fill_color">@color/colorPrimary</color>
 </resources>

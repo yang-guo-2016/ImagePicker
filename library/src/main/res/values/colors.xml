@@ -14,6 +14,7 @@
     <color name="image_picker_image_grid_list_item_mask_color">#88000000</color>
     <color name="image_picker_image_grid_bottom_bar_background">#303135</color>
     <color name="image_picker_image_grid_bottom_bar_button_dir_text_color">#FFFFFF</color>
+    <color name="image_picker_image_grid_bottom_bar_button_dir_indicator_fill_color">#ff9e9e9e</color>
     <color name="image_picker_image_grid_bottom_bar_button_preview_text_color">#FFFFFF</color>
     <color name="image_picker_image_grid_bottom_bar_divider_background">#cc111111</color>
 

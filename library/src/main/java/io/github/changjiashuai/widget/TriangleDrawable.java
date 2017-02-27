@@ -1,11 +1,11 @@
 package io.github.changjiashuai.widget;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
+import android.support.annotation.ColorInt;
 
 /**
  * Email: changjiashuai@gmail.com
@@ -17,9 +17,9 @@ public class TriangleDrawable extends ShapeDrawable {
 
     private Path mPath;
 
-    public TriangleDrawable() {
+    public TriangleDrawable(@ColorInt int color) {
         mPath = new Path();
-        getPaint().setColor(Color.GRAY);
+        getPaint().setColor(color);
         setShape(new TriangleShape(mPath, 32, 32));
         setBounds(0, 0, 4, 4);
     }

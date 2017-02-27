@@ -3,6 +3,7 @@ package io.github.changjiashuai.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     private FolderPopUpWindow mFolderPopupWindow;  //ImageSet的PopupWindow
     private List<ImageFolder> mImageFolders;   //所有的图片文件夹
     private ImageGridAdapter mImageGridAdapter;  //图片九宫格展示的适配器
+    private int mTriangleFillColor = Color.GRAY;
 
 
     @Override
@@ -68,7 +70,10 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         mBtnOk = (Button) findViewById(R.id.btn_ok);
         mBtnOk.setOnClickListener(this);
         mBtnDir = (Button) findViewById(R.id.btn_dir);
-        mBtnDir.setCompoundDrawablesWithIntrinsicBounds(null, null, new TriangleDrawable(), null);
+        mTriangleFillColor = getResources()
+                .getColor(R.color.image_picker_image_grid_bottom_bar_button_dir_indicator_fill_color);
+        mBtnDir.setCompoundDrawablesWithIntrinsicBounds(null, null,
+                new TriangleDrawable(mTriangleFillColor), null);
         mBtnDir.setOnClickListener(this);
         mBtnPreview = (Button) findViewById(R.id.btn_preview);
         mBtnPreview.setOnClickListener(this);
@@ -278,7 +283,6 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     }
 
     private void finishWithResult() {
-        Log.i(TAG, "finishWithResult: ");
         Intent intent = new Intent();
         intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
         setResult(ImagePicker.RESULT_CODE_ITEMS, intent);   //单选不需要裁剪，返回数据
