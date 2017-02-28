@@ -3,9 +3,9 @@ package io.github.changjiashuai.imagepicker;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import io.github.changjiashuai.ImagePicker;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.ui.ImageGridActivity;
 import io.github.changjiashuai.ui.ImagePreviewActivity;
 import io.github.changjiashuai.widget.CropImageView;
 
@@ -26,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initImagePicker();
-        findViewById(R.id.btn_pick).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_multi_pick).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ImageGridActivity.class);
-                startActivityForResult(intent, ImagePicker.REQUEST_CODE_PICK);
+                initMultiPicker();
+            }
+        });
+        findViewById(R.id.btn_single_pick).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initSinglePicker();
             }
         });
         mIvImage = (ImageView) findViewById(R.id.iv_image);
@@ -39,20 +42,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "onActivityResult: ");
         if (requestCode == ImagePicker.REQUEST_CODE_PICK) {
             if (data != null) {
                 if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
                     boolean isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
-                    Log.i(TAG, "onActivityResult: isOrigin=" + isOrigin);
-                    Log.i(TAG, "onActivityResult: getSelectedImages" +
-                            ImagePicker.getInstance().getSelectedImages());
-                    ArrayList<ImageItem> imageItems = ImagePicker.getInstance().getSelectedImages();
-                    if (imageItems.size()>0){
-                        ImageItem imageItem = imageItems.get(0);
-                        Glide.with(getApplicationContext())
-                                .load(imageItem.path)
-                                .into(mIvImage);
+                    if (!isOrigin) {
+                        ArrayList<ImageItem> imageItems = ImagePicker.getInstance().getSelectedImages();
+                        if (imageItems.size() > 0) {
+                            ImageItem imageItem = imageItems.get(0);
+                            Glide.with(getApplicationContext())
+                                    .load(imageItem.path)
+                                    .into(mIvImage);
+                        }
+                    } else {
+                        //遍历做压缩处理
+                        Toast.makeText(this, "稍后压缩", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -60,22 +64,28 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * 初始化仿微信控件ImagePicker
-     */
+    private void initMultiPicker(){
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+        config.multiMode(true).selectLimit(9);
+        ImagePicker.getInstance().pickImageForResult(this, config);
+    }
 
-    private void initImagePicker() {
-        ImagePicker imagePicker = ImagePicker.getInstance();
-        imagePicker.setImageLoader(new GlideImageLoder());   //设置图片加载器
-        imagePicker.setShowCamera(true);  //显示拍照按钮
-        imagePicker.setMultiMode(false);
-        imagePicker.setCrop(true);        //允许裁剪（单选才有效）
-        imagePicker.setSaveRectangle(true); //是否按矩形区域保存
-        imagePicker.setSelectLimit(9);    //选中数量限制
-        imagePicker.setStyle(CropImageView.RECTANGLE);  //裁剪框的形状
-        imagePicker.setFocusWidth(800);   //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
-        imagePicker.setFocusHeight(800);  //裁剪框的高度。单位像素（圆形自动取宽高最小值）
-        imagePicker.setOutPutX(1000);//保存文件的宽度。单位像素
-        imagePicker.setOutPutY(1000);//保存文件的高度。单位像素
+    private void initMultiPickerWithAllConfig(){
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+        config.multiMode(true).selectLimit(9).showCamera(true).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);
+        ImagePicker.getInstance().pickImageForResult(this, config);
+    }
+
+    private void initSinglePicker(){
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+        config.multiMode(false).selectLimit(1).crop(true).saveRectangle(false).cropStyle(CropImageView.CIRCLE);
+        ImagePicker.getInstance().pickImageForResult(this, config);
+    }
+
+    private void initSinglePickerWithAllConfig(){
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+        config.multiMode(false).selectLimit(1).crop(true).saveRectangle(false).cropStyle(CropImageView.CIRCLE)
+                .showCamera(false).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);;
+        ImagePicker.getInstance().pickImageForResult(this, config);
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,7 @@ import java.util.Locale;
 import io.github.changjiashuai.bean.ImageFolder;
 import io.github.changjiashuai.bean.ImageItem;
 import io.github.changjiashuai.loader.ImageLoader;
+import io.github.changjiashuai.ui.ImageGridActivity;
 import io.github.changjiashuai.widget.CropImageView;
 
 /**
@@ -37,129 +39,91 @@ public class ImagePicker {
     public static final String EXTRA_SELECTED_IMAGE_POSITION = "extra_selected_image_position";
     public static final String EXTRA_SHOW_SELECTED = "extra_show_selected";
 
-    private boolean multiMode = true;               //图片选择模式
-    private boolean crop = true;                    //裁剪
-    private boolean saveRectangle = false;          //裁剪后的图片是否是矩形，否则跟随裁剪框的形状
-    private boolean showCamera = true;              //显示相机
-    private int selectLimit = 9;                    //最大选择图片数量
-    private int outPutX = 800;                      //裁剪保存宽度
-    private int outPutY = 800;                      //裁剪保存高度
-    private int focusWidth = 280;                   //焦点框的宽度
-    private int focusHeight = 280;                  //焦点框的高度
-
-    private ImageLoader mImageLoader;               //图片加载器
-    @CropImageView.Style
-    private int style = CropImageView.RECTANGLE;    //裁剪框的形状
+    /*image picker 启动配置*/
+    private Config mConfig;
     private File cropCacheFolder;
     private File takeImageFile;
+    /*选中的图片集合*/
+    private ArrayList<ImageItem> mSelectedImages = new ArrayList<>();
+    /*所有的图片文件夹*/
+    private List<ImageFolder> mImageFolders;
+    /*当前选中的文件夹位置， 0表示所有图片*/
+    private int mCurrentImageFolderPosition = 0;
+    /*图片选中的监听回调*/
+    private List<OnImageSelectedListener> mImageSelectedListeners;
 
-    private ArrayList<ImageItem> mSelectedImages = new ArrayList<>();   //选中的图片集合
-    private List<ImageFolder> mImageFolders; //所有的图片文件夹
-    private int mCurrentImageFolderPosition = 0;    //当前选中的文件夹位置， 0表示所有图片
-    private List<OnImageSelectedListener> mImageSelectedListeners;   //图片选中的监听回调
+    private static volatile ImagePicker singleton = null;
 
-    private static ImagePicker mInstance;
+    public static ImagePicker getInstance() {
+        if (singleton == null) {
+            synchronized (ImagePicker.class) {
+                if (singleton == null) {
+                    singleton = new ImagePicker();
+                }
+            }
+        }
+        return singleton;
+    }
 
     private ImagePicker() {
     }
 
-    public static ImagePicker getInstance() {
-        if (mInstance == null) {
-            synchronized (ImagePicker.class) {
-                if (mInstance == null) {
-                    mInstance = new ImagePicker();
-                }
-            }
+    public void pickImageForResult(Activity activity, @NonNull Config config) {
+        mConfig = config;
+        if (mConfig == null) {
+            throw new IllegalArgumentException("config must be set!!!");
         }
-        return mInstance;
+        Intent intent = new Intent();
+        if (activity != null) {
+            intent.setClass(activity, ImageGridActivity.class);
+            activity.startActivityForResult(intent, REQUEST_CODE_PICK);
+        }
     }
 
     public boolean isMultiMode() {
-        return multiMode;
-    }
-
-    public void setMultiMode(boolean multiMode) {
-        this.multiMode = multiMode;
+        return mConfig.multiMode;
     }
 
     public boolean isCrop() {
-        return crop;
-    }
-
-    public void setCrop(boolean crop) {
-        this.crop = crop;
+        return mConfig.crop;
     }
 
     public boolean isSaveRectangle() {
-        return saveRectangle;
-    }
-
-    public void setSaveRectangle(boolean saveRectangle) {
-        this.saveRectangle = saveRectangle;
+        return mConfig.saveRectangle;
     }
 
     public boolean isShowCamera() {
-        return showCamera;
-    }
-
-    public void setShowCamera(boolean showCamera) {
-        this.showCamera = showCamera;
+        return mConfig.showCamera;
     }
 
     public int getSelectLimit() {
-        return selectLimit;
-    }
-
-    public void setSelectLimit(int selectLimit) {
-        this.selectLimit = selectLimit;
+        return mConfig.selectLimit;
     }
 
     public int getOutPutX() {
-        return outPutX;
-    }
-
-    public void setOutPutX(int outPutX) {
-        this.outPutX = outPutX;
+        return mConfig.outPutX;
     }
 
     public int getOutPutY() {
-        return outPutY;
-    }
-
-    public void setOutPutY(int outPutY) {
-        this.outPutY = outPutY;
+        return mConfig.outPutY;
     }
 
     public int getFocusWidth() {
-        return focusWidth;
-    }
-
-    public void setFocusWidth(int focusWidth) {
-        this.focusWidth = focusWidth;
+        return mConfig.focusWidth;
     }
 
     public int getFocusHeight() {
-        return focusHeight;
-    }
-
-    public void setFocusHeight(int focusHeight) {
-        this.focusHeight = focusHeight;
+        return mConfig.focusHeight;
     }
 
     public ImageLoader getImageLoader() {
-        return mImageLoader;
+        return mConfig.mImageLoader;
     }
 
-    public void setImageLoader(ImageLoader imageLoader) {
-        mImageLoader = imageLoader;
-    }
-
-    public @CropImageView.Style int getStyle() {
-        return style;
-    }
-
-    public void setStyle(@CropImageView.Style int style) {
-        this.style = style;
+    public
+    @CropImageView.Style
+    int getStyle() {
+        return mConfig.style;
     }
 
     public File getCropCacheFolder(Context context) {
@@ -310,7 +274,7 @@ public class ImagePicker {
     }
 
     public void addSelectedImageItem(int position, ImageItem item, boolean isAdd) {
-        if (isAdd && mSelectedImages.size() < selectLimit) {
+        if (isAdd && mSelectedImages.size() < getSelectLimit()) {
             if (mSelectedImages.contains(item)) {
                 return;
             }
@@ -330,6 +294,92 @@ public class ImagePicker {
         }
         for (OnImageSelectedListener l : mImageSelectedListeners) {
             l.onImageSelected(position, item, isAdd);
+        }
+    }
+
+    public static class Config {
+
+        //============must===============//
+        /*图片加载器*/
+        private ImageLoader mImageLoader;
+
+        //============optional===========//
+        /*图片选择模式*/
+        private boolean multiMode = true;
+        /*裁剪*/
+        private boolean crop = true;
+        /*裁剪后的图片是否是矩形，否则跟随裁剪框的形状*/
+        private boolean saveRectangle = false;
+        /*最大选择图片数量*/
+        private int selectLimit = 9;
+        /*裁剪框的形状*/
+        @CropImageView.Style
+        private int style = CropImageView.RECTANGLE;
+
+        //===========default=============//
+        /*显示相机*/
+        private boolean showCamera = true;
+        /*裁剪保存文件的宽度。单位像素*/
+        private int outPutX = 800;
+        /*裁剪保存文件的高度。单位像素*/
+        private int outPutY = 800;
+        /*裁剪框的宽度。单位像素（圆形自动取宽高最小值）*/
+        private int focusWidth = 800;
+        /*裁剪框的高度。单位像素（圆形自动取宽高最小值）*/
+        private int focusHeight = 800;
+
+        public Config(ImageLoader imageLoader) {
+            mImageLoader = imageLoader;
+        }
+
+        public Config multiMode(boolean multiMode) {
+            this.multiMode = multiMode;
+            return this;
+        }
+
+        public Config crop(boolean crop) {
+            this.crop = crop;
+            return this;
+        }
+
+        public Config saveRectangle(boolean saveRectangle) {
+            this.saveRectangle = saveRectangle;
+            return this;
+        }
+
+        public Config showCamera(boolean showCamera) {
+            this.showCamera = showCamera;
+            return this;
+        }
+
+        public Config selectLimit(int selectLimit) {
+            this.selectLimit = selectLimit;
+            return this;
+        }
+
+        public Config outPutX(int outPutX) {
+            this.outPutX = outPutX;
+            return this;
+        }
+
+        public Config outPutY(int outPutY) {
+            this.outPutY = outPutY;
+            return this;
+        }
+
+        public Config focusWidth(int focusWidth) {
+            this.focusWidth = focusWidth;
+            return this;
+        }
+
+        public Config focusHeight(int focusHeight) {
+            this.focusHeight = focusHeight;
+            return this;
+        }
+
+        public Config cropStyle(@CropImageView.Style int style) {
+            this.style = style;
+            return this;
         }
     }
 }

@@ -166,7 +166,7 @@ public class ImageGridAdapter extends BaseAdapter {
             }
         });
         //根据是否多选，显示或隐藏checkbox
-        if (ImagePicker.getInstance().isMultiMode()) {
+        if (ImagePicker.getInstance().isMultiMode() && ImagePicker.getInstance().getSelectLimit() > 1) {
             holder.cbCheck.setVisibility(View.VISIBLE);
             boolean checked = mSelectedImages.contains(imageItem);
             if (checked) {
