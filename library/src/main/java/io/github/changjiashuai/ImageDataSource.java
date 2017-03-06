@@ -14,7 +14,6 @@ import java.util.List;
 
 import io.github.changjiashuai.bean.ImageFolder;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.library.R;
 
 /**
  * Email: changjiashuai@gmail.com

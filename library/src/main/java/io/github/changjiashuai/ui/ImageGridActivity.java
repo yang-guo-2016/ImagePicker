@@ -19,19 +19,19 @@ import java.util.List;
 import io.github.changjiashuai.BaseActivity;
 import io.github.changjiashuai.ImageDataSource;
 import io.github.changjiashuai.ImagePicker;
+import io.github.changjiashuai.R;
 import io.github.changjiashuai.adapter.ImageFolderAdapter;
 import io.github.changjiashuai.adapter.ImageGridAdapter;
 import io.github.changjiashuai.bean.ImageFolder;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.widget.FolderPopUpWindow;
 import io.github.changjiashuai.widget.TriangleDrawable;
 
 public class ImageGridActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, ImageDataSource.OnImagesLoadedListener, ImageGridAdapter.OnImageItemClickListener {
 
     private static final String TAG = "ImageGridActivity";
-    public static final int REQUEST_PERMISSION_STORAGE = 0x01;
-    public static final int REQUEST_PERMISSION_CAMERA = 0x02;
+    public static final int RC_STORAGE_CODE = 0x01;
+    public static final int RC_CAMERA_CODE = 0x02;
 
     /*是否选中原图*/
     private boolean isOrigin = false;
@@ -67,7 +67,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                 new ImageDataSource(this, null, this);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, RC_STORAGE_CODE);
             }
         }
     }
@@ -120,17 +120,17 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSION_STORAGE) {
+        if (requestCode == RC_STORAGE_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 new ImageDataSource(this, null, this);
             } else {
-                showToast("权限被禁止，无法选择本地图片");
+                showToast(getString(R.string.storage_reject));
             }
-        } else if (requestCode == REQUEST_PERMISSION_CAMERA) {
+        } else if (requestCode == RC_CAMERA_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 ImagePicker.getInstance().takePicture(this, ImagePicker.REQUEST_CODE_TAKE);
             } else {
-                showToast("权限被禁止，无法打开相机");
+                showToast(getString(R.string.camera_reject));
             }
         }
     }
@@ -270,10 +270,10 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         } else if (requestCode == ImagePicker.REQUEST_CODE_PREVIEW) {
             //预览
             if (resultCode == ImagePicker.RESULT_CODE_BACK) {
-                isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                isOrigin = data.getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
                 // 直接从预览返回
             } else if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
-                isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                isOrigin = data.getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
                 // 在预览界面选择后确定返回
                 finishWithResult();
             }
@@ -284,7 +284,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         Intent intent = new Intent(this, ImagePreviewActivity.class);
         intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
         intent.putExtra(ImagePicker.EXTRA_SHOW_SELECTED, showSelected);
-        intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
+        intent.putExtra(ImagePicker.EXTRA_IS_ORIGIN, isOrigin);
         startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);  //如果是多选，点击图片进入预览界面
     }
 
@@ -295,7 +295,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
 
     private void finishWithResult() {
         Intent intent = new Intent();
-        intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
+        intent.putExtra(ImagePicker.EXTRA_IS_ORIGIN, isOrigin);
         setResult(ImagePicker.RESULT_CODE_ITEMS, intent);   //单选不需要裁剪，返回数据
         finish();
     }

@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.changjiashuai.ImagePicker;
+import io.github.changjiashuai.R;
 import io.github.changjiashuai.Utils;
 import io.github.changjiashuai.bean.ImageFolder;
-import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.widget.FolderPopUpWindow;
 
 /**

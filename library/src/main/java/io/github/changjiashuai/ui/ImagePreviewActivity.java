@@ -17,17 +17,17 @@ import java.util.ArrayList;
 
 import io.github.changjiashuai.BaseActivity;
 import io.github.changjiashuai.ImagePicker;
+import io.github.changjiashuai.R;
 import io.github.changjiashuai.adapter.ImagePageAdapter;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.widget.ViewPagerFixed;
 
 public class ImagePreviewActivity extends BaseActivity implements ImagePicker.OnImageSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "ImagePreviewActivity";
-    /*跳转进ImagePreviewFragment的图片文件夹下所有的图片*/
+    /*跳转进时的图片文件夹下所有的图片*/
     private ArrayList<ImageItem> mImageItems;
-    /*跳转进ImagePreviewFragment时的序号，改文件夹下第几个图片*/
+    /*跳转进时的序号，该文件夹下第几个图片*/
     private int mCurrentPosition = 0;
     /*显示当前图片的位置  例如  5/31 */
     private TextView mTitleCount;
@@ -36,7 +36,6 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
     private View mContentLayout;
     private View topBar;
 
-    public static final String ISORIGIN = "isOrigin";
     /*是否选中原图*/
     private boolean isOrigin;
     /*是否选中当前图片的CheckBox*/
@@ -84,7 +83,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         mTitleCount.setText(getString(R.string.image_picker_preview_image_count, mCurrentPosition + 1,
                 mImageItems.size()));
 
-        isOrigin = getIntent().getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+        isOrigin = getIntent().getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
         ImagePicker.getInstance().addOnImageSelectedListener(this);
 
         topBar.findViewById(R.id.btn_back).setOnClickListener(this);
@@ -176,7 +175,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
         for (ImageItem ii : mSelectedImages) {
             size += ii.size;
         }
-        if (size > 0) {
+        if (size > 0 && isOrigin) {
             String fileSize = Formatter.formatFileSize(this, size);
             mCbOrigin.setText(getString(R.string.image_picker_origin_size, fileSize));
         } else {
@@ -201,14 +200,6 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
             mBtnOk.getBackground().setColorFilter(getResources()
                     .getColor(R.color.image_picker_button_disabled), PorterDuff.Mode.MULTIPLY);
         }
-
-//        if (mCbOrigin.isChecked()) {
-//            long size = 0;
-//            for (ImageItem imageItem : selectedImages)
-//                size += imageItem.size;
-//            String fileSize = Formatter.formatFileSize(this, size);
-//            mCbOrigin.setText(getString(R.string.origin_size, fileSize));
-//        }
     }
 
     @Override
@@ -229,7 +220,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
 
     private void finishWithResult(int resultCode) {
         Intent intent = new Intent();
-        intent.putExtra(ImagePreviewActivity.ISORIGIN, isOrigin);
+        intent.putExtra(ImagePicker.EXTRA_IS_ORIGIN, isOrigin);
         setResult(resultCode, intent);
         finish();
     }

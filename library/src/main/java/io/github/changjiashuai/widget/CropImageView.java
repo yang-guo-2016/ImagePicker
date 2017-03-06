@@ -20,10 +20,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.IntDef;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import io.github.changjiashuai.library.R;
+import io.github.changjiashuai.R;
+
 
 /**
  * Email: changjiashuai@gmail.com
@@ -42,7 +43,7 @@ import io.github.changjiashuai.library.R;
  * Created by CJS on 2017/2/22 16:45.
  */
 
-public class CropImageView extends ImageView {
+public class CropImageView extends AppCompatImageView {
 
     /********************************
      * 中间的FocusView绘图相关的参数

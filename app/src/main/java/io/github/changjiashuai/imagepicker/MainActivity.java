@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import io.github.changjiashuai.ImagePicker;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.ui.ImagePreviewActivity;
 import io.github.changjiashuai.widget.CropImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == ImagePicker.REQUEST_CODE_PICK) {
             if (data != null) {
                 if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
-                    boolean isOrigin = data.getBooleanExtra(ImagePreviewActivity.ISORIGIN, false);
+                    boolean isOrigin = data.getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
                     if (!isOrigin) {
                         ArrayList<ImageItem> imageItems = ImagePicker.getInstance().getSelectedImages();
                         if (imageItems.size() > 0) {
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private void initSinglePickerWithAllConfig(){
         ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
         config.multiMode(false).selectLimit(1).crop(true).saveRectangle(false).cropStyle(CropImageView.CIRCLE)
-                .showCamera(false).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);;
+                .showCamera(false).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);
         ImagePicker.getInstance().pickImageForResult(this, config);
     }
 }

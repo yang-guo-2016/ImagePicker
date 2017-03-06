@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 import io.github.changjiashuai.BaseActivity;
 import io.github.changjiashuai.ImagePicker;
+import io.github.changjiashuai.R;
 import io.github.changjiashuai.Utils;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.ui.ImageGridActivity;
 
 /**
@@ -118,7 +118,7 @@ public class ImageGridAdapter extends BaseAdapter {
                 if (!((BaseActivity) mActivity).checkPermission(Manifest.permission.CAMERA)) {
                     ActivityCompat.requestPermissions(mActivity,
                             new String[]{Manifest.permission.CAMERA},
-                            ImageGridActivity.REQUEST_PERMISSION_CAMERA);
+                            ImageGridActivity.RC_CAMERA_CODE);
                 } else {
                     ImagePicker.getInstance().takePicture(mActivity, ImagePicker.REQUEST_CODE_TAKE);
                 }
@@ -185,10 +185,10 @@ public class ImageGridAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        public View rootView;
-        public ImageView ivThumb;
-        public View mask;
-        public AppCompatCheckBox cbCheck;
+        View rootView;
+        ImageView ivThumb;
+        View mask;
+        AppCompatCheckBox cbCheck;
 
         public ViewHolder(View view) {
             rootView = view;

@@ -11,7 +11,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.widget.SystemBarTintManager;
 
 /**

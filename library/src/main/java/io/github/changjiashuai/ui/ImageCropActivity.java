@@ -14,8 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import io.github.changjiashuai.ImagePicker;
+import io.github.changjiashuai.R;
 import io.github.changjiashuai.bean.ImageItem;
-import io.github.changjiashuai.library.R;
 import io.github.changjiashuai.widget.CropImageView;
 
 public class ImageCropActivity extends AppCompatActivity implements View.OnClickListener, CropImageView.OnBitmapSaveCompleteListener {
@@ -111,7 +111,7 @@ public class ImageCropActivity extends AppCompatActivity implements View.OnClick
 
         ImagePicker.getInstance().setSelectedImages(mImageItems);
         Intent intent = new Intent();
-        intent.putExtra(ImagePreviewActivity.ISORIGIN, true);
+        intent.putExtra(ImagePicker.EXTRA_IS_ORIGIN, true);
         setResult(ImagePicker.RESULT_CODE_ITEMS, intent);   //单选不需要裁剪，返回数据
         finish();
     }

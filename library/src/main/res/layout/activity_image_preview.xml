@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,18 +23,17 @@
         android:background="@color/image_picker_image_preview_bottom_bar_background">
 
         <android.support.v7.widget.AppCompatCheckBox
-            android:theme="@style/ImagePickerTheme.CheckBox"
             android:id="@+id/cb_origin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:paddingLeft="8dp"
-            android:text="原图(3.07M)"
-            android:textColor="@color/image_picker_image_preview_bottom_bar_origin_text_color" />
+            android:textColor="@color/image_picker_image_preview_bottom_bar_origin_text_color"
+            android:theme="@style/ImagePickerTheme.CheckBox"
+            tools:text="原图(3.07M)" />
 
         <android.support.v7.widget.AppCompatCheckBox
-            android:theme="@style/ImagePickerTheme.CheckBox"
             android:id="@+id/cb_check"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,6 +44,7 @@
             android:includeFontPadding="true"
             android:paddingLeft="8dp"
             android:text="@string/image_picker_select"
-            android:textColor="@color/image_picker_image_preview_bottom_bar_select_text_color" />
+            android:textColor="@color/image_picker_image_preview_bottom_bar_select_text_color"
+            android:theme="@style/ImagePickerTheme.CheckBox" />
     </RelativeLayout>
 </RelativeLayout>

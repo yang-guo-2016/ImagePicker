@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -38,6 +40,7 @@ public class ImagePicker {
 
     public static final String EXTRA_SELECTED_IMAGE_POSITION = "extra_selected_image_position";
     public static final String EXTRA_SHOW_SELECTED = "extra_show_selected";
+    public static final String EXTRA_IS_ORIGIN = "isOrigin";
 
     /*image picker 启动配置*/
     private Config mConfig;
@@ -213,7 +216,8 @@ public class ImagePicker {
         takePictureIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
             if (Utils.existSDCard()) {
-                takeImageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/camera/");
+                takeImageFile = new File(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera");
             } else {
                 takeImageFile = Environment.getDataDirectory();
             }
@@ -223,8 +227,14 @@ public class ImagePicker {
                 // 照相机有自己默认的存储路径，拍摄的照片将返回一个缩略图。如果想访问原始图片，
                 // 可以通过dat extra能够得到原始图片位置。即，如果指定了目标uri，data就没有数据，
                 // 如果没有指定uri，则data就返回有数据！
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.parse("file://" + takeImageFile.getAbsolutePath()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    takePictureIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    Uri contentUri = FileProvider.getUriForFile(activity,
+                                    BuildConfig.APPLICATION_ID + ".fileProvider", takeImageFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+                } else {
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(takeImageFile));
+                }
             }
         }
         activity.startActivityForResult(takePictureIntent, requestCode);
