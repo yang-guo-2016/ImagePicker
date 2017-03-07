@@ -20,17 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/image_picker_folder_popup_window_list_view_background">
+            android:background="@android:color/transparent">
 
             <ListView
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="6dp"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp"
                 tools:listitem="@layout/folder_list_item" />

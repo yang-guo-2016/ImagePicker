@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_single_pick).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initSinglePicker();
+                initSinglePickerWithAllConfig();
             }
         });
         mIvImage = (ImageView) findViewById(R.id.iv_image);
@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initMultiPicker(){
@@ -71,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initMultiPickerWithAllConfig(){
         ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
-        config.multiMode(true).selectLimit(9).showCamera(true).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);
+        config.multiMode(true).selectLimit(9)
+                .showCamera(true).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);
         ImagePicker.getInstance().pickImageForResult(this, config);
     }
 

@@ -35,6 +35,7 @@ public class ImagePicker {
     public static final int REQUEST_CODE_TAKE = 1001;
     public static final int REQUEST_CODE_CROP = 1002;
     public static final int REQUEST_CODE_PREVIEW = 1003;
+
     public static final int RESULT_CODE_ITEMS = 1004;
     public static final int RESULT_CODE_BACK = 1005;
 
@@ -257,7 +258,7 @@ public class ImagePicker {
      */
     public static void galleryAddPic(Context context, File file) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri contentUri = Uri.parse("file://" + file.getAbsolutePath());
+        Uri contentUri = Uri.fromFile(file);
         mediaScanIntent.setData(contentUri);
         context.sendBroadcast(mediaScanIntent);
     }
@@ -334,9 +335,9 @@ public class ImagePicker {
         /*裁剪保存文件的高度。单位像素*/
         private int outPutY = 800;
         /*裁剪框的宽度。单位像素（圆形自动取宽高最小值）*/
-        private int focusWidth = 800;
+        private int focusWidth = 400;
         /*裁剪框的高度。单位像素（圆形自动取宽高最小值）*/
-        private int focusHeight = 800;
+        private int focusHeight = 400;
 
         public Config(ImageLoader imageLoader) {
             mImageLoader = imageLoader;
