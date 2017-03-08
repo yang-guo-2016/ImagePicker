@@ -13,7 +13,7 @@ import io.github.changjiashuai.loader.ImageLoader;
  * Created by CJS on 2017/2/23 17:56.
  */
 
-public class GlideImageLoder implements ImageLoader {
+public class GlideImageLoader implements ImageLoader {
 
     @Override
     public void displayImage(Context context, String path, ImageView imageView, int width, int height) {
@@ -22,10 +22,5 @@ public class GlideImageLoder implements ImageLoader {
                 .centerCrop()
 //                .placeholder(R.drawable.default_image)
                 .into(imageView);
-    }
-
-    @Override
-    public void clearMemoryCache() {
-
     }
 }

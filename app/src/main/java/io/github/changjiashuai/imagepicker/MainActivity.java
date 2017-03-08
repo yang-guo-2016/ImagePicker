@@ -52,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
                             Glide.with(getApplicationContext())
                                     .load(imageItem.path)
                                     .into(mIvImage);
+
+                            ArrayList<String> paths = new ArrayList<>();
+                            for (ImageItem imageItem1 : imageItems) {
+                                paths.add(imageItem1.path);
+                            }
                         }
                     } else {
                         //遍历做压缩处理
@@ -62,27 +67,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initMultiPicker(){
-        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+    private void initMultiPicker() {
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoader());
         config.multiMode(true).selectLimit(9);
         ImagePicker.getInstance().pickImageForResult(this, config);
     }
 
-    private void initMultiPickerWithAllConfig(){
-        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+    private void initMultiPickerWithAllConfig() {
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoader());
         config.multiMode(true).selectLimit(9)
                 .showCamera(true).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);
         ImagePicker.getInstance().pickImageForResult(this, config);
     }
 
-    private void initSinglePicker(){
-        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+    private void initSinglePicker() {
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoader());
         config.multiMode(false).selectLimit(1).crop(true).saveRectangle(false).cropStyle(CropImageView.CIRCLE);
         ImagePicker.getInstance().pickImageForResult(this, config);
     }
 
-    private void initSinglePickerWithAllConfig(){
-        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoder());
+    private void initSinglePickerWithAllConfig() {
+        ImagePicker.Config config = new ImagePicker.Config(new GlideImageLoader());
         config.multiMode(false).selectLimit(1).crop(true).saveRectangle(false).cropStyle(CropImageView.CIRCLE)
                 .showCamera(false).outPutX(1000).outPutY(1000).focusWidth(800).focusHeight(800);
         ImagePicker.getInstance().pickImageForResult(this, config);

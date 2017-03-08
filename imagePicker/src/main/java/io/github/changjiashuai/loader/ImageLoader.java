@@ -11,6 +11,4 @@ import android.widget.ImageView;
 
 public interface ImageLoader {
     void displayImage(Context context, String path, ImageView imageView, int width, int height);
-
-    void clearMemoryCache();
 }
