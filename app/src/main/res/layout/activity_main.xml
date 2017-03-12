@@ -1,37 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_image_picker"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.github.changjiashuai.imagepicker.MainActivity">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_multi_pick"
+    <LinearLayout
+        android:id="@+id/activity_image_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/custom_btn"
-        android:text="Multi Pick Image" />
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <Button
-        android:id="@+id/btn_single_pick"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_btn"
-        android:text="Single Pick Image" />
+        <RadioGroup
+            android:id="@+id/rg_choice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/iv_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher" />
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rb_multi_choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/mult_select" />
 
-</LinearLayout>
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/rb_single_choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/single_select" />
+        </RadioGroup>
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/et_max_select_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="@string/nine" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cb_show_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_show_camera" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cb_crop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_crop" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/sp_crop_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/crops" />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cb_output_rectangle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_save_rectangle" />
+
+        <LinearLayout
+            android:id="@+id/layout_crop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/focus_w" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_focus_w"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="400" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/focus_h" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_focus_h"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="400" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/output_x" />
+
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_output_x"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="800" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/output_y" />
+
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_output_y"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="800" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_pick_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_btn"
+            android:text="@string/pick_image" />
+
+        <Button
+            android:id="@+id/btn_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_btn"
+            android:text="@string/show_preview" />
+
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher" />
+
+    </LinearLayout>
+</ScrollView>

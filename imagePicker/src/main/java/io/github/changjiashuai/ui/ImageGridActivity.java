@@ -267,7 +267,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         } else if (requestCode == ImagePicker.REQUEST_CODE_CROP) {
             //裁剪
             finishWithResult();
-        } else if (requestCode == ImagePicker.REQUEST_CODE_PREVIEW) {
+        } else if (requestCode == ImagePicker.REQUEST_CODE_GRID_PREVIEW) {
             //预览
             if (resultCode == ImagePicker.RESULT_CODE_BACK) {
                 isOrigin = data.getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
@@ -281,11 +281,11 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
     }
 
     private void viewToPreviewActivity(int position, boolean showSelected) {
-        Intent intent = new Intent(this, ImagePreviewActivity.class);
+        Intent intent = new Intent(this, ImageGridPreviewActivity.class);
         intent.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
         intent.putExtra(ImagePicker.EXTRA_SHOW_SELECTED, showSelected);
         intent.putExtra(ImagePicker.EXTRA_IS_ORIGIN, isOrigin);
-        startActivityForResult(intent, ImagePicker.REQUEST_CODE_PREVIEW);  //如果是多选，点击图片进入预览界面
+        startActivityForResult(intent, ImagePicker.REQUEST_CODE_GRID_PREVIEW);  //如果是多选，点击图片进入预览界面
     }
 
     private void viewToCropActivity() {

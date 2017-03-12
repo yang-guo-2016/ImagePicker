@@ -23,11 +23,17 @@ import io.github.changjiashuai.bean.ImageItem;
 
 public class ImagePageAdapter extends PagerAdapter {
 
+    private static final String TAG = "ImagePageAdapter";
     private int screenWidth;
     private int screenHeight;
     private ArrayList<ImageItem> images = new ArrayList<>();
     private Activity mActivity;
-    public PhotoViewClickListener listener;
+    private PhotoViewClickListener listener;
+    private View.OnLongClickListener mOnLongClickListener;
+
+    public void setOnLongClickListener(View.OnLongClickListener onLongClickListener) {
+        mOnLongClickListener = onLongClickListener;
+    }
 
     public ImagePageAdapter(Activity activity, ArrayList<ImageItem> images) {
         this.mActivity = activity;
@@ -62,6 +68,16 @@ public class ImagePageAdapter extends PagerAdapter {
             @Override
             public void onOutsidePhotoTap() {
 
+            }
+        });
+        photoView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mOnLongClickListener != null) {
+                    mOnLongClickListener.onLongClick(v);
+                    return true;
+                }
+                return false;
             }
         });
         container.addView(photoView);

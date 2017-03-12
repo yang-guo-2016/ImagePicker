@@ -21,6 +21,7 @@ import io.github.changjiashuai.bean.ImageFolder;
 import io.github.changjiashuai.bean.ImageItem;
 import io.github.changjiashuai.loader.ImageLoader;
 import io.github.changjiashuai.ui.ImageGridActivity;
+import io.github.changjiashuai.ui.ImagePreviewActivity;
 import io.github.changjiashuai.widget.CropImageView;
 
 /**
@@ -34,7 +35,8 @@ public class ImagePicker {
     public static final int REQUEST_CODE_PICK = 1000;
     public static final int REQUEST_CODE_TAKE = 1001;
     public static final int REQUEST_CODE_CROP = 1002;
-    public static final int REQUEST_CODE_PREVIEW = 1003;
+    public static final int REQUEST_CODE_GRID_PREVIEW = 1003;
+    public static final int REQUEST_CODE_PREVIEW = 1004;
 
     public static final int RESULT_CODE_ITEMS = 1004;
     public static final int RESULT_CODE_BACK = 1005;
@@ -81,6 +83,21 @@ public class ImagePicker {
         if (activity != null) {
             intent.setClass(activity, ImageGridActivity.class);
             activity.startActivityForResult(intent, REQUEST_CODE_PICK);
+        }
+    }
+
+    public void previewImageForResult(Activity activity, @NonNull Config config,
+                                      ArrayList<String> urls, int currentItemPosition) {
+        mConfig = config;
+        if (mConfig == null) {
+            throw new IllegalArgumentException("config must be set!!!");
+        }
+        Intent intent = new Intent();
+        if (activity != null) {
+            intent.setClass(activity, ImagePreviewActivity.class);
+            intent.putStringArrayListExtra(ImagePreviewActivity.EXTRA_URLS, urls);
+            intent.putExtra(ImagePreviewActivity.EXTRA_CURRENT_ITEM_POSITION, currentItemPosition);
+            activity.startActivityForResult(intent, REQUEST_CODE_PREVIEW);
         }
     }
 
@@ -231,10 +248,10 @@ public class ImagePicker {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     takePictureIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     Uri contentUri = FileProvider.getUriForFile(activity,
-                                    BuildConfig.APPLICATION_ID + ".fileProvider", takeImageFile);
+                            BuildConfig.APPLICATION_ID + ".fileProvider", takeImageFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                 } else {
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(takeImageFile));
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(takeImageFile));
                 }
             }
         }

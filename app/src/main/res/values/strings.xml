@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">ImagePicker</string>
+    <string name="mult_select">多选</string>
+    <string name="single_select">单选</string>
+    <string name="nine">9</string>
+    <string name="is_show_camera">是否显示相机</string>
+    <string name="is_crop">是否裁剪</string>
+    <string name="is_save_rectangle">裁剪后是否矩形保存图片</string>
+    <string name="focus_w">裁剪框宽:</string>
+    <string name="focus_h">裁剪框高:</string>
+    <string name="output_x">输出宽:</string>
+    <string name="output_y">输出高:</string>
+    <string name="pick_image">Pick Image</string>
+    <string name="show_preview">Show Preview</string>
+    <string-array name="crops">
+        <item>矩形</item>
+        <item>圆形</item>
+    </string-array>
 </resources>
