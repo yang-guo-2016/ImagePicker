@@ -1,6 +1,7 @@
 package io.github.changjiashuai;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,7 +9,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -246,9 +246,10 @@ public class ImagePicker {
                 // 可以通过dat extra能够得到原始图片位置。即，如果指定了目标uri，data就没有数据，
                 // 如果没有指定uri，则data就返回有数据！
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    takePictureIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    Uri contentUri = FileProvider.getUriForFile(activity,
-                            BuildConfig.APPLICATION_ID + ".fileProvider", takeImageFile);
+                    ContentValues contentValues = new ContentValues(1);
+                    contentValues.put(MediaStore.Images.Media.DATA, takeImageFile.getAbsolutePath());
+                    Uri contentUri = activity.getContentResolver()
+                            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                 } else {
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(takeImageFile));
