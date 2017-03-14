@@ -86,7 +86,7 @@ task copyDoc(type: Copy) {
 
 //上传到JCenter所需要的源码文件
 artifacts {
-    archives javadocJar
+//    archives javadocJar
     archives sourcesJar
 }
 

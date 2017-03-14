@@ -1,5 +1,24 @@
 # ImagePicker
 图片选择器，提供多种图片加载接口，可以配置
+
+
+[![Download](https://api.bintray.com/packages/changjiashuai/maven/imagepicker/images/download.svg)](https://bintray.com/changjiashuai/maven/imagepicker/_latestVersion)
+
+
+ 
+### Adding to your project
+
+> Add the jcenter repository information in your build.gradle file like this
+
+```
+
+dependencies {
+	compile 'io.github.changjiashuai:imagepicker:{releaseVersion}'
+}
+
+```
+
+
 ## 使用
 
 ```
