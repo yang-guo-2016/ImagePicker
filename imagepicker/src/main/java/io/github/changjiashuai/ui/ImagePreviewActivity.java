@@ -3,7 +3,6 @@ package io.github.changjiashuai.ui;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -90,7 +89,7 @@ public class ImagePreviewActivity extends BaseActivity implements ImagePicker.On
 
     @Override
     public boolean onLongClick(View v) {
-        Toast.makeText(this, "Long Click", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Long Click", Toast.LENGTH_SHORT).show();
         return true;
     }
 

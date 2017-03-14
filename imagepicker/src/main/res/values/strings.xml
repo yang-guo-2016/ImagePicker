@@ -11,7 +11,7 @@
     <string name="image_picker_photo_crop">图片裁剪</string>
     <string name="image_picker_origin">原图</string>
     <string name="image_picker_origin_size">原图(%1$s)</string>
-    <string name="image_picker_take_photo">拍摄照片</string>
+    <string name="image_picker_take_photo">拍摄</string>
     <string name="storage_reject">权限被禁止，无法选择本地图片</string>
     <string name="camera_reject">权限被禁止，无法打开相机</string>
 </resources>

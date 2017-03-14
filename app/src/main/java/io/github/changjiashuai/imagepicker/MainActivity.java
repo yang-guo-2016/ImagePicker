@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private void viewToPreview() {
         ImagePicker.getInstance().previewImageForResult(this,
                 new ImagePicker.Config(new GlideImageLoader()),
-                urls,0);
+                urls, 0);
     }
 
 
