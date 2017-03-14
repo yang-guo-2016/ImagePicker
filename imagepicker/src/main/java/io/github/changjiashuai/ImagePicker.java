@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -249,7 +250,7 @@ public class ImagePicker {
                     ContentValues contentValues = new ContentValues(1);
                     contentValues.put(MediaStore.Images.Media.DATA, takeImageFile.getAbsolutePath());
                     Uri contentUri = activity.getContentResolver()
-                            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+                            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                 } else {
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(takeImageFile));
@@ -302,19 +303,29 @@ public class ImagePicker {
         mImageSelectedListeners.remove(l);
     }
 
-    public void addSelectedImageItem(int position, ImageItem item, boolean isAdd) {
-        if (isAdd && mSelectedImages.size() < getSelectLimit()) {
-            if (mSelectedImages.contains(item)) {
-                return;
-            }
-            mSelectedImages.add(item);
+    public void updateSelectedImageItem(int position, ImageItem item, boolean isAdd) {
+        if (isAdd) {
+            addSelectedImageItem(item);
         } else {
-            if (!mSelectedImages.contains(item)) {
-                return;
-            }
-            mSelectedImages.remove(item);
+            removeSelectedImageItem(item);
         }
         notifyImageSelectedChanged(position, item, isAdd);
+        Log.i("TAG", "updateSelectedImageItem: " + mSelectedImages);
+    }
+
+    public void addSelectedImageItem(ImageItem imageItem) {
+        if (mSelectedImages.size() < getSelectLimit()) {
+            if (mSelectedImages.contains(imageItem)) {
+                return;
+            }
+            mSelectedImages.add(imageItem);
+        }
+    }
+
+    public void removeSelectedImageItem(ImageItem imageItem) {
+        if (mSelectedImages.contains(imageItem)) {
+            mSelectedImages.remove(imageItem);
+        }
     }
 
     private void notifyImageSelectedChanged(int position, ImageItem item, boolean isAdd) {

@@ -236,7 +236,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         } else {
             //  单选裁剪或返回
             ImagePicker.getInstance().clearSelectedImages();
-            ImagePicker.getInstance().addSelectedImageItem(position,
+            ImagePicker.getInstance().updateSelectedImageItem(position,
                     ImagePicker.getInstance().getCurrentImageFolderItems().get(position), true);
             if (ImagePicker.getInstance().isCrop()) {
                 viewToCropActivity();
@@ -257,7 +257,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
                 ImageItem imageItem = new ImageItem();
                 imageItem.path = ImagePicker.getInstance().getTakeImageFile().getAbsolutePath();
                 ImagePicker.getInstance().clearSelectedImages();
-                ImagePicker.getInstance().addSelectedImageItem(0, imageItem, true);
+                ImagePicker.getInstance().updateSelectedImageItem(0, imageItem, true);
                 if (ImagePicker.getInstance().isCrop()) {
                     viewToCropActivity();
                 } else {
@@ -272,6 +272,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
             if (resultCode == ImagePicker.RESULT_CODE_BACK) {
                 isOrigin = data.getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
                 // 直接从预览返回
+                mImageGridAdapter.notifyDataSetChanged();
             } else if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
                 isOrigin = data.getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
                 // 在预览界面选择后确定返回

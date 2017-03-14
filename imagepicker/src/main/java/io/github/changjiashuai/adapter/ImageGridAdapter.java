@@ -160,7 +160,7 @@ public class ImageGridAdapter extends BaseAdapter {
                     holder.mask.setVisibility(View.GONE);
                 } else {
                     ImagePicker.getInstance()
-                            .addSelectedImageItem(position, imageItem, holder.cbCheck.isChecked());
+                            .updateSelectedImageItem(position, imageItem, holder.cbCheck.isChecked());
                     holder.mask.setVisibility(View.VISIBLE);
                 }
             }

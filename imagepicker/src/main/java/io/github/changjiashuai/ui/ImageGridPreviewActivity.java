@@ -39,12 +39,18 @@ public class ImageGridPreviewActivity extends BaseActivity implements ImagePicke
     /*是否选中原图*/
     private boolean isOrigin;
     /*是否选中当前图片的CheckBox*/
-    private AppCompatCheckBox mCbCheck;
+    private AppCompatCheckBox mCbSelect;
     /*原图*/
     private AppCompatCheckBox mCbOrigin;
     /*确认图片的选择*/
     private Button mBtnOk;
     private View bottomBar;
+
+    private ViewPagerFixed mViewPager;
+    private ImagePageAdapter mPageAdapter;
+
+    /*选中进来又移除的图片*/
+    private ArrayList<ImageItem> removeImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +58,7 @@ public class ImageGridPreviewActivity extends BaseActivity implements ImagePicke
         setContentView(R.layout.activity_image_grid_preview);
 
         mCurrentPosition = getIntent().getIntExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, 0);
-        boolean showSelected = getIntent().getBooleanExtra(ImagePicker.EXTRA_SHOW_SELECTED, false);
+        final boolean showSelected = getIntent().getBooleanExtra(ImagePicker.EXTRA_SHOW_SELECTED, false);
         if (showSelected) {
             mImageItems = ImagePicker.getInstance().getSelectedImages();
         } else {
@@ -62,84 +68,133 @@ public class ImageGridPreviewActivity extends BaseActivity implements ImagePicke
 
         //初始化控件
         mContentLayout = findViewById(R.id.content);
-
         //因为状态栏透明后，布局整体会上移，所以给头部加上状态栏的margin值，保证头部不会被覆盖
         topBar = findViewById(R.id.top_bar);
+        topBar.findViewById(R.id.btn_back).setOnClickListener(this);
 
         mTitleCount = (TextView) findViewById(R.id.tv_des);
+        //初始化当前页面的状态
+        updateTopTips();
 
-        ViewPagerFixed viewPager = (ViewPagerFixed) findViewById(R.id.viewpager);
-        ImagePageAdapter adapter = new ImagePageAdapter(this, mImageItems);
-        adapter.setPhotoViewClickListener(new ImagePageAdapter.PhotoViewClickListener() {
+        mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
+        mBtnOk.setOnClickListener(this);
+        updateTopButton(ImagePicker.getInstance().getSelectImageCount());
+
+        mViewPager = (ViewPagerFixed) findViewById(R.id.viewpager);
+        mPageAdapter = new ImagePageAdapter(this, mImageItems);
+        mPageAdapter.setPhotoViewClickListener(new ImagePageAdapter.PhotoViewClickListener() {
             @Override
             public void OnPhotoTapListener(View view, float v, float v1) {
                 onImageSingleTap();
             }
         });
-        viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(mCurrentPosition, false);
+        mViewPager.setAdapter(mPageAdapter);
+        mViewPager.setCurrentItem(mCurrentPosition, false);
 
-        //初始化当前页面的状态
-        mTitleCount.setText(getString(R.string.image_picker_preview_image_count, mCurrentPosition + 1,
-                mImageItems.size()));
 
         isOrigin = getIntent().getBooleanExtra(ImagePicker.EXTRA_IS_ORIGIN, false);
-        ImagePicker.getInstance().addOnImageSelectedListener(this);
-
-        topBar.findViewById(R.id.btn_back).setOnClickListener(this);
-        mBtnOk = (Button) topBar.findViewById(R.id.btn_ok);
-        mBtnOk.setOnClickListener(this);
 
         bottomBar = findViewById(R.id.bottom_bar);
 
-        mCbCheck = (AppCompatCheckBox) findViewById(R.id.cb_check);
+        mCbSelect = (AppCompatCheckBox) findViewById(R.id.cb_select);
         mCbOrigin = (AppCompatCheckBox) findViewById(R.id.cb_origin);
+
         mCbOrigin.setText(getString(R.string.image_picker_origin));
         mCbOrigin.setOnCheckedChangeListener(this);
         mCbOrigin.setChecked(isOrigin);
 
-        //初始化当前页面的状态
-        onImageSelected(0, null, false);
-        ImageItem item = mImageItems.get(mCurrentPosition);
-        boolean isSelected = ImagePicker.getInstance().isSelect(item);
-        mTitleCount.setText(getString(R.string.image_picker_preview_image_count,
-                mCurrentPosition + 1, mImageItems.size()));
-        mCbCheck.setChecked(isSelected);
-        updateOriginImageSize();
+        updateBottomCbOrigin();
+        updateBottomCbSelect();
+
         //滑动ViewPager的时候，根据外界的数据改变当前的选中状态和当前的图片的位置描述文本
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 mCurrentPosition = position;
-                ImageItem item = mImageItems.get(mCurrentPosition);
-                boolean isSelected = ImagePicker.getInstance().isSelect(item);
-                mCbCheck.setChecked(isSelected);
-                mTitleCount.setText(getString(R.string.image_picker_preview_image_count,
-                        mCurrentPosition + 1, mImageItems.size()));
+                updateTopTips();
+                ImageItem imageItem = mImageItems.get(mCurrentPosition);
+                if (removeImages.contains(imageItem)) {
+                    mCbSelect.setChecked(false);
+                    return;
+                }
+                updateBottomCbSelect();
             }
         });
         //当点击当前选中按钮的时候，需要根据当前的选中状态添加和移除图片
-        mCbCheck.setOnClickListener(new View.OnClickListener() {
+        mCbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ImageItem imageItem = mImageItems.get(mCurrentPosition);
                 int selectLimit = ImagePicker.getInstance().getSelectLimit();
-                if (mCbCheck.isChecked() && mSelectedImages.size() >= selectLimit) {
-                    showToast(ImageGridPreviewActivity.this.getString(R.string.image_picker_select_limit, selectLimit));
-                    mCbCheck.setChecked(false);
-                } else {
-                    ImagePicker.getInstance()
-                            .addSelectedImageItem(mCurrentPosition, imageItem, mCbCheck.isChecked());
-
-                    //每次选择一张图片就计算一次图片总大小
-                    if (mSelectedImages != null && mSelectedImages.size() > 0) {
-                        updateOriginImageSize();
-                    } else {
-                        mCbOrigin.setText(getString(R.string.image_picker_origin));
+                if (mCbSelect.isChecked()) {
+                    if (mSelectedImages.size() >= selectLimit) {
+                        showToast(ImageGridPreviewActivity.this
+                                .getString(R.string.image_picker_select_limit, selectLimit));
+                        mCbSelect.setChecked(false);
                     }
                 }
+                if (showSelected) {
+                    if (mCbSelect.isChecked()) {
+                        if (removeImages.contains(imageItem)) {
+                            removeImages.remove(imageItem);
+                        }
+                    } else {
+                        if (!removeImages.contains(imageItem)) {
+                            removeImages.add(imageItem);
+                        }
+                    }
+                    int selectCount = mSelectedImages.size() - removeImages.size();
+                    updateTopButton(selectCount);
+                } else {
+                    ImagePicker.getInstance()
+                            .updateSelectedImageItem(mCurrentPosition, imageItem, mCbSelect.isChecked());
+                }
+
             }
         });
+
+        ImagePicker.getInstance().addOnImageSelectedListener(this);
+        //初始化当前页面的状态
+        onImageSelected(0, null, false);
+    }
+
+    private void updateTopTips() {
+        mTitleCount.setText(getString(R.string.image_picker_preview_image_count, mCurrentPosition + 1,
+                mImageItems.size()));
+    }
+
+    private void updateTopButton(int selectCount) {
+        if (selectCount > 0) {
+            mBtnOk.setText(getString(R.string.image_picker_select_complete,
+                    selectCount, ImagePicker.getInstance().getSelectLimit()));
+            mBtnOk.setEnabled(true);
+            mBtnOk.getBackground().setColorFilter(getResources()
+                    .getColor(R.color.image_picker_button_normal), PorterDuff.Mode.MULTIPLY);
+        } else {
+            mBtnOk.setText(getString(R.string.image_picker_complete));
+            mBtnOk.setEnabled(false);
+            mBtnOk.getBackground().setColorFilter(getResources()
+                    .getColor(R.color.image_picker_button_disabled), PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    private void updateBottomCbOrigin() {
+        //每次选择一张图片就计算一次图片总大小
+        if (mCbOrigin.isChecked()) {
+            isOrigin = true;
+            if (mSelectedImages != null && mSelectedImages.size() > 0) {
+                updateOriginImageSize();
+            }
+        } else {
+            isOrigin = false;
+            mCbOrigin.setText(getString(R.string.image_picker_origin));
+        }
+    }
+
+    private void updateBottomCbSelect() {
+        ImageItem item = mImageItems.get(mCurrentPosition);
+        boolean isSelected = ImagePicker.getInstance().isSelect(item);
+        mCbSelect.setChecked(isSelected);
     }
 
 
@@ -184,22 +239,13 @@ public class ImageGridPreviewActivity extends BaseActivity implements ImagePicke
     }
 
     /**
-     * 图片添加成功后，修改当前图片的选中数量 当调用 addSelectedImageItem 或 deleteSelectedImageItem 都会触发当前回调
+     * 图片添加成功后，修改当前图片的选中数量 当调用 updateSelectedImageItem 或 deleteSelectedImageItem 都会触发当前回调
      */
     @Override
     public void onImageSelected(int position, ImageItem item, boolean isAdd) {
-        if (ImagePicker.getInstance().getSelectImageCount() > 0) {
-            mBtnOk.setText(getString(R.string.image_picker_select_complete,
-                    ImagePicker.getInstance().getSelectImageCount(), ImagePicker.getInstance().getSelectLimit()));
-            mBtnOk.setEnabled(true);
-            mBtnOk.getBackground().setColorFilter(getResources()
-                    .getColor(R.color.image_picker_button_normal), PorterDuff.Mode.MULTIPLY);
-        } else {
-            mBtnOk.setText(getString(R.string.image_picker_complete));
-            mBtnOk.setEnabled(false);
-            mBtnOk.getBackground().setColorFilter(getResources()
-                    .getColor(R.color.image_picker_button_disabled), PorterDuff.Mode.MULTIPLY);
-        }
+        updateTopTips();
+        updateTopButton(ImagePicker.getInstance().getSelectImageCount());
+        updateBottomCbOrigin();
     }
 
     @Override
@@ -219,10 +265,16 @@ public class ImageGridPreviewActivity extends BaseActivity implements ImagePicke
     }
 
     private void finishWithResult(int resultCode) {
+        updateSelectImages();
         Intent intent = new Intent();
         intent.putExtra(ImagePicker.EXTRA_IS_ORIGIN, isOrigin);
         setResult(resultCode, intent);
         finish();
+    }
+
+    private void updateSelectImages() {
+        mSelectedImages.removeAll(removeImages);
+        ImagePicker.getInstance().setSelectedImages(mSelectedImages);
     }
 
     @Override
@@ -235,18 +287,7 @@ public class ImageGridPreviewActivity extends BaseActivity implements ImagePicke
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int id = buttonView.getId();
         if (id == R.id.cb_origin) {
-            if (isChecked) {
-                long size = 0;
-                for (ImageItem item : mSelectedImages) {
-                    size += item.size;
-                }
-                String fileSize = Formatter.formatFileSize(this, size);
-                isOrigin = true;
-                mCbOrigin.setText(getString(R.string.image_picker_origin_size, fileSize));
-            } else {
-                isOrigin = false;
-                mCbOrigin.setText(getString(R.string.image_picker_origin));
-            }
+            updateBottomCbOrigin();
         }
     }
 }
