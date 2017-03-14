@@ -28,16 +28,6 @@
             android:name="io.github.changjiashuai.ui.ImageCropActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/ImagePickerTheme" />
-
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="io.github.changjiashuai.fileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
     </application>
 
 </manifest>
