@@ -142,6 +142,10 @@ public class ImagePicker {
         return mConfig.mImageLoader;
     }
 
+    public Config getConfig() {
+        return mConfig;
+    }
+
     public
     @CropImageView.Style
     int getStyle() {
