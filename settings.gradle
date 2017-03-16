@@ -1,3 +1,1 @@
 include ':app', ':imagepicker'
-
-org.gradle.jvmargs=-Xms4096m -Xmx4096m -XX:MaxPermSize=1024M
