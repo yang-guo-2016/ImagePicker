@@ -1,11 +1,16 @@
 package io.github.changjiashuai.ui;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -14,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 
+import java.io.File;
 import java.util.List;
 
 import io.github.changjiashuai.BaseActivity;
@@ -246,12 +252,37 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         }
     }
 
+    private boolean deleteImage(String imgPath) {
+        ContentResolver resolver = getContentResolver();
+        Cursor cursor = MediaStore.Images.Media.query(resolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {
+                        MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=?",new String[] { imgPath }, null);
+        boolean result = false;
+        if (cursor.moveToFirst()) {
+            long id = cursor.getLong(0);
+            Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri uri = ContentUris.withAppendedId(contentUri, id);
+            int count = getContentResolver().delete(uri, null, null);
+            result = count == 1;
+        } else {
+            File file = new File(imgPath);
+            result = file.delete();
+        }
+        return result;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ImagePicker.REQUEST_CODE_TAKE) {
             //拍照
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_CANCELED) {
+                // TODO: 2017/3/16 maybe have good idea! 
+                File tempFile = ImagePicker.getInstance().getTakeImageFile();
+                deleteImage(tempFile.getPath());
+                mImageGridAdapter.notifyDataSetChanged();
+            } else if (resultCode == RESULT_OK) {
                 //发送广播通知图片增加了
                 ImagePicker.galleryAddPic(this, ImagePicker.getInstance().getTakeImageFile());
                 ImageItem imageItem = new ImageItem();

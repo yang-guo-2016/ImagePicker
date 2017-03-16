@@ -3,7 +3,8 @@
 /local.properties
 .idea
 gradle.properties
+imagepicker.jks
 .DS_Store
-/build
+build
 /captures
 .externalNativeBuild
