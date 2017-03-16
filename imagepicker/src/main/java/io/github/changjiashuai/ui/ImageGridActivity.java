@@ -278,7 +278,7 @@ public class ImageGridActivity extends BaseActivity implements ImagePicker.OnIma
         if (requestCode == ImagePicker.REQUEST_CODE_TAKE) {
             //拍照
             if (resultCode == RESULT_CANCELED) {
-                // TODO: 2017/3/16 maybe have good idea! 
+                // TODO: 2017/3/16 maybe have good idea!
                 File tempFile = ImagePicker.getInstance().getTakeImageFile();
                 deleteImage(tempFile.getPath());
                 mImageGridAdapter.notifyDataSetChanged();
