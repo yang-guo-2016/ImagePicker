@@ -35,8 +35,9 @@
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/et_max_select_count"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="40dp"
             android:inputType="number"
             android:text="@string/nine" />
 
